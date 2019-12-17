@@ -45,13 +45,32 @@ function meshGrid(w, h, cell, extrusion)
 	return m
 end
 
-local m = meshGrid(128, 128, 8)
+function rectMesh(w, h, cell, color, alpha)
+	local m = Mesh.new(true)
+	m:setVertex(1, 0, 0, 0)
+	m:setVertex(2, w*cell, 0, 0)
+	m:setVertex(3, w*cell, h*cell, 0)
+	m:setVertex(4, 0, h*cell, 0)
+	m:setColorArray(color,alpha, color,alpha, color,alpha, color,alpha)
+	m:setIndexArray(1,2,3, 1,3,4)
+	return m
+end
+
+local w,h, cell = 128,128,16
+
+water = rectMesh(w, h, cell, 0x0000ff, 0.5)
+water:setAnchorPoint(.5,.5)
+
+local m = meshGrid(w,h, cell, 255)
 m:setAnchorPoint(.5,.5)
-stage:setPosition(app:getContentWidth() / 2, app:getContentHeight() / 2)
 stage:addChild(m)
+stage:addChild(water)
+
+stage:setPosition(app:getContentWidth() / 2, app:getContentHeight() / 2)
 stage:setRotationX(45)
 
 local timer = 0
+
 stage:addEventListener(Event.ENTER_FRAME, function(e)
 	local dt = e.deltaTime
 	timer += dt
