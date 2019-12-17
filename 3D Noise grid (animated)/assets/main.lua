@@ -17,11 +17,6 @@ function meshGrid(n, w, h, cell, extrusion)
 	local v = 1
 	local i = 1
 	
-	local n = Noise.new()
-	n:setFrequency(0.04)
-	n:setFractalOctaves(10)
-	n:setNoiseType(Noise.SIMPLEX_FRACTAL)
-	
 	for y = 1, h+1 do 
 		for x = 1, w+1 do 
 			local nv = n:noise(x,y)
