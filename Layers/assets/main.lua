@@ -6,7 +6,7 @@ layers:addLayer("im_gona_be_removed", 1) -- add another one to the bottom
 -- layers:load("bottom", "middle", "top")
 -- you can also use this method to add layers on top of existing
 
-layers:removeLayer("im_gonna_be_removed") -- delete first layer
+layers:removeLayer("im_gonna_be_removed") -- delete layer by name
 layers:addLayer("im_also_gonna_be_removed", 1)
 layers:removeLayer(1) -- delete first layer
 
