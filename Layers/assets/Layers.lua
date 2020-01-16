@@ -83,18 +83,7 @@ function Layers:addTop(sprite)
 	local lr = self:getLayer(self:getNumChildren())
 	lr:addChild(sprite)
 end
--- remove sprite from given layer
-function Layers:remove(name_or_id, sprite)
-	local lr = self:getLayer(name_or_id)
-	lr:removeChild(sprite)
-end
--- 
-function Layers:removeQuery(sprite)
-	for i = 1, self:getNumChildren() do
-		local lr = self:getLayer(i)
-		if (lr:contains(sprite)) then 
-			lr:removeChild(sprite)
-			break
-		end
-	end
+-- remove sprite from layer
+function Layers:remove(sprite)
+	sprite:removeFromParent()
 end
