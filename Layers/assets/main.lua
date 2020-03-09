@@ -1,6 +1,6 @@
 local layers = Layers.new("middle") -- create 1 layer
 layers:addLayer("top") -- add another one on top 
-layers:addLayer("im_gona_be_removed", 1) -- add another one to the bottom
+layers:addLayer("im_gonna_be_removed", 1) -- add another one to the bottom
 
 -- OR you can use Layers:load(...) method to add multiple layers in a single line of code
 -- layers:load("bottom", "middle", "top")
