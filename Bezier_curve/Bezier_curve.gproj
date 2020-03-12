@@ -1,0 +1,13 @@
+<project>
+ <properties build_number="1" logicalHeight="480" orientation="1" osx_org="GiderosMobile" html5_wasm="0" win_org="GiderosMobile" html5_crash="" logicalWidth="480" osx_signingId="" splash_v_image="" exportMode="0" encryptCode="0" html5_fbinstant="0" win_domain="giderosmobile.com" backgroundColor="#ffffff" autorotation="0" tv_icon="" packageName="com.yourdomain.yourapp" splash_h_image="" winrt_org="GiderosMobile" osx_bundle="com.yourdomain." version="1.0" mouseTouchOrder="0" windowWidth="0" disableSplash="0" osx_category="5" encryptAssets="0" version_code="1" vsync="0" osx_installerId="" app_name="" html5_pack="0" touchToMouse="1" splashScaleMode="0" osx_domain="giderosmobile.com" android_template="0" windowHeight="0" mouseToTouch="1" fps="60" html5_mem="256" html5_fbload="100" architecture="0" retinaDisplay="0" scaleMode="3" winrt_package="com.yourdomain.yourapp" html5_host="" app_icon="" html5_symbols="0" iosDevice="0" ios_bundle="com.yourdomain.">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/init.lua"/>
+ <file name="assets/Bezier.lua"/>
+ <file name="assets/Bolularegular.otf"/>
+ <file name="assets/Editor.lua"/>
+ <file name="assets/SUI.lua"/>
+ <file name="assets/main.lua"/>
+</project>
