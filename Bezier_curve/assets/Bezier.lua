@@ -67,13 +67,20 @@ function Bezier:getDirCurvePoints(step)
 	step = clamp(step or 0.1, 0.0001, 1)
 	local i = 1
 	local points = {}
+	local nextX,nextY 
 	for t = 0, 1, step do 
-		local x,y = calcPoint(t, self.srcPoints)
+		local x,y
+		if t == 0 then 
+			x,y = calcPoint(t, self.srcPoints)	
+		else
+			x,y = nextX,nextY
+		end
+		
 		local dx = 0
 		local dy = 0
 		local a = 0
 		if t+step <= 1 then 
-			local nextX,nextY = calcPoint(t+step, self.srcPoints)
+			nextX,nextY = calcPoint(t+step, self.srcPoints)
 			a = atan2(nextY-y, nextX-x)
 			dx = cos(a)
 			dy = sin(a)
