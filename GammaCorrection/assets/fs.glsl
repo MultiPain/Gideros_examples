@@ -6,7 +6,6 @@ varying mediump vec2 fTexCoord;
 
 void main(){
 	vec4 col = texture2D(fTexture, fTexCoord);
-    vec3 gammCorrection = pow(col.rgb, vec3(1.0/fGamma));
-	
+	vec3 gammCorrection = pow(col.rgb, vec3(1.0/fGamma));	
 	gl_FragColor = vec4(gammCorrection, col.a);
 }
