@@ -1,0 +1,12 @@
+<project>
+ <properties fps="60" app_icon="" html5_symbols="0" ios_bundle="com.yourdomain." packageName="com.yourdomain.yourapp" version_code="1" touchToMouse="1" winrt_org="GiderosMobile" windowHeight="0" win_org="GiderosMobile" vsync="0" mouseToTouch="1" app_name="" osx_installerId="" html5_fbinstant="0" retinaDisplay="0" architecture="0" mouseTouchOrder="0" html5_fbload="100" html5_crash="" android_template="0" logicalWidth="1280" html5_host="" encryptAssets="0" osx_domain="giderosmobile.com" osx_org="GiderosMobile" splash_h_image="" scaleMode="3" win_domain="giderosmobile.com" splash_v_image="" winrt_package="com.yourdomain.yourapp" orientation="0" html5_pack="0" osx_bundle="com.yourdomain." encryptCode="0" version="1.0" html5_wasm="0" build_number="1" osx_signingId="" autorotation="0" html5_mem="256" tv_icon="" splashScaleMode="0" exportMode="0" disableSplash="0" logicalHeight="720" windowWidth="0" osx_category="5" backgroundColor="#ffffff" iosDevice="0">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/DOG.png"/>
+ <file source="../../../Gideros/Bezier_curve/assets/SUI.lua"/>
+ <file name="assets/fs.glsl"/>
+ <file name="assets/main.lua"/>
+ <file name="assets/vs.glsl"/>
+</project>
