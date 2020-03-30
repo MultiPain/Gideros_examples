@@ -55,7 +55,7 @@ function limitVec(x,y,len)
 end
 
 -- Initial grid setup
-function setupBoard(flag)
+function setupBoard()
 	for y = 1, GRID_H do 
 		noiseData[y] = {}
 		for x = 1, GRID_W do 
@@ -108,7 +108,7 @@ function setupBoard(flag)
 		}}
 	end
 	
-	if not flag then 
+	if not THRESHOLD then 
 		if DRAW_VECTORS then stage:addChild(MainLayer) end
 		stage:addChild(particles)
 	else
@@ -177,5 +177,5 @@ function updateBoard(e)
 	end
 end
 
-setupBoard(THRESHOLD)
+setupBoard()
 stage:addEventListener("enterFrame", updateBoard)
