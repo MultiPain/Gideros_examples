@@ -11,8 +11,6 @@ uniform vec2 rectSize;
 
 vec2 lightPosition;
 
-varying vec2 v_texcoord;
-
 float distCube(vec2 p, vec2 size)
 {
     return length(max(abs(p)-size,0.0));
@@ -30,39 +28,37 @@ float distLight(vec2 p)
 }
 
 float distW(vec2 pos, vec2 size){
-    float v = 10000.0;
+	float v = 10000.0;
 	// rect distance:
-    v = min(v,distCube(pos,size));
+	v = min(v,distCube(pos,size));
 	// circle distance:
-    //v = min(v, distCircle(pos, size.x));
-    return v;
+	//v = min(v, distCircle(pos, size.x));
+	return v;
 }
 
 float getDistance(vec2 pt)
 {
-    vec2 dir = normalize(lightPosition-pt);
-    vec2 pos = pt;
-    float depth = 0.5;
-    vec2 size = rectSize / 2.0 / fResolution;
-    for (int i = 0; i < MAX_STEPS; i++){
-        float dw = distW(pos - rectPos / fResolution - size, size);
-        float dl = distLight(pos);
-        float d = min(dw,dl);
-        if (dw < 0.001)
-            return 1.0;
-        else if (dl < 0.001)
-            return 0.0;        
-        depth += d;
-        pos += dir*d;
-    }
+	vec2 dir = normalize(lightPosition-pt);
+	vec2 pos = pt;
+	
+	vec2 size = rectSize / 2.0 / fResolution;
+	for (int i = 0; i < MAX_STEPS; i++){
+		float dw = distW(pos - rectPos / fResolution - size, size);
+		float dl = distLight(pos);
+		float d = min(dw,dl);
+		if (dw < 0.001)
+			return 1.0;
+		else if (dl < 0.001)
+			return 0.0;        
+		pos += dir*d;
+	}
     
-    return 1.0;
+	return 1.0;
 }
 
 void main(void)
 {
 	lightPosition = vec2(0.5);
-    
-    float d = getDistance(fTexCoord) * 2.0;
+	float d = getDistance(fTexCoord);
 	gl_FragColor = vec4(vec3(0.0)*d,d);
 }
