@@ -1,0 +1,14 @@
+<project>
+ <properties windowWidth="0" mouseToTouch="1" osx_signingId="" splashScaleMode="0" exportMode="0" html5_crash="" fps="60" touchToMouse="1" osx_domain="giderosmobile.com" disableSplash="0" orientation="1" iosDevice="0" build_number="1" html5_wasm="0" autorotation="0" windowHeight="0" osx_installerId="" mouseTouchOrder="0" osx_org="GiderosMobile" backgroundColor="#ffffff" splash_v_image="" win_org="GiderosMobile" winrt_org="GiderosMobile" app_icon="" retinaDisplay="0" vsync="0" html5_symbols="0" encryptCode="0" osx_bundle="com.yourdomain." html5_mem="256" scaleMode="3" logicalHeight="1280" logicalWidth="720" html5_fbload="100" tv_icon="" version="1.0" win_domain="giderosmobile.com" architecture="0" android_template="0" splash_h_image="" app_name="" html5_fbinstant="0" winrt_package="com.yourdomain.yourapp" html5_host="" html5_pack="0" ios_bundle="com.yourdomain." packageName="com.yourdomain.yourapp" encryptAssets="0" osx_category="5" version_code="1">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/Light.lua"/>
+ <file name="assets/Scene.lua"/>
+ <file name="assets/background.png"/>
+ <file name="assets/fShader.glsl"/>
+ <file name="assets/light.png"/>
+ <file name="assets/main.lua"/>
+ <file name="assets/vShader.glsl"/>
+</project>
