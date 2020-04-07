@@ -5,7 +5,7 @@ local function hex2rgb(hex)
 	return r,g,b
 end
 
-local LightShader = Shader.new("vLight", "fLight", 0, 
+local ShadowShader = Shader.new("vLight", "fLight", 0, 
 	{
 		{name="vMatrix",type=Shader.CMATRIX,sys=Shader.SYS_WVP,vertex=true},
 		{name="fColor",type=Shader.CFLOAT4,sys=Shader.SYS_COLOR,vertex=false},
@@ -14,10 +14,7 @@ local LightShader = Shader.new("vLight", "fLight", 0,
 		
 		{name="fResolution",type=Shader.CFLOAT,vertex=false},		
 		{name="rectPos",type=Shader.CFLOAT2,vertex=false},		
-		{name="rectSize",type=Shader.CFLOAT2,vertex=false},		
-		{name="lightColor",type=Shader.CFLOAT4,vertex=false},		
-		{name="lightRadius",type=Shader.CFLOAT,vertex=false},		
-		{name="lightPower",type=Shader.CFLOAT,vertex=false},
+		{name="rectSize",type=Shader.CFLOAT2,vertex=false},
 	},{
 		{name="vVertex",type=Shader.DFLOAT,mult=3,slot=0,offset=0},
 		{name="vColor",type=Shader.DUBYTE,mult=4,slot=1,offset=0},
@@ -25,9 +22,9 @@ local LightShader = Shader.new("vLight", "fLight", 0,
 	}
 )
 
-LightShader:setConstant("fResolution", Shader.CFLOAT2, 1, {4,4})
-LightShader:setConstant("rectPos", Shader.CFLOAT2, 1, {0,0})
-LightShader:setConstant("rectSize", Shader.CFLOAT2, 1, {0,0})
+ShadowShader:setConstant("fResolution", Shader.CFLOAT2, 1, {0,0})
+ShadowShader:setConstant("rectPos", Shader.CFLOAT2, 1, {0,0})
+ShadowShader:setConstant("rectSize", Shader.CFLOAT2, 1, {0,0})
 
 Light = Core.class(Sprite)
 
@@ -43,7 +40,7 @@ function Light:init(world, radius, color, alpha, tex)
 	
 	self.rt = RenderTarget.new(self.r * 2, self.r * 2)
 	self.shadow = Bitmap.new(self.rt)
-	self.shadow:setShader(LightShader)
+	self.shadow:setShader(ShadowShader)
 	
 	self.canvas = RenderTarget.new(self.r * 2, self.r * 2)
 	self.canvas:draw(self.lightSourceImg)
@@ -57,7 +54,7 @@ function Light:update()
 	local list, len = self.world:queryRect(x,y,self.r*2,self.r*2)
 	
 	if len > 0 then 
-		LightShader:setConstant("fResolution", Shader.CFLOAT2, 1, {self.r*2,self.r*2})
+		ShadowShader:setConstant("fResolution", Shader.CFLOAT2, 1, {self.r*2,self.r*2})
 		
 		self.canvas:clear(0,0)
 		self.canvas:draw(self.lightSourceImg)
@@ -66,8 +63,8 @@ function Light:update()
 			local bw,bh = rect:getSize()
 			local lx,ly = self:globalToLocal(bx,by)
 			
-			LightShader:setConstant("rectPos", Shader.CFLOAT2, 1, {lx,ly})
-			LightShader:setConstant("rectSize", Shader.CFLOAT2, 1, {bw,bh})
+			ShadowShader:setConstant("rectPos", Shader.CFLOAT2, 1, {lx,ly})
+			ShadowShader:setConstant("rectSize", Shader.CFLOAT2, 1, {bw,bh})
 			
 			self.canvas:draw(self.shadow)
 		end
