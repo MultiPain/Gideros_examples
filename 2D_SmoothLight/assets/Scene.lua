@@ -114,9 +114,9 @@ function Scene:mouseDown(e)
 	self.pmx = e.x
 	self.pmy = e.y
 	
-	if e.button == KeyCode.MOUSE_RIGHT then 
+	if e.button == KeyCode.MOUSE_LEFT then 
 		self.dragableLight = self:findLight(e.x, e.y)
-	elseif e.button == KeyCode.MOUSE_LEFT then 
+	elseif e.button == KeyCode.MOUSE_RIGHT then 
 		self.dragableLight = self:createLight(e.x,e.y,lightTex,RND(96,128),RND(0x909090, 0xffffff))
 		self.dragableLight:setBlendMode(Sprite.ADD)
 	elseif e.button == KeyCode.MOUSE_MIDDLE then 
