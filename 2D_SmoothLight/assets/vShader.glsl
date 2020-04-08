@@ -8,4 +8,5 @@ void main() {
   vec4 vertex = vec4(vVertex,1.0);
   gl_Position = vMatrix*vertex;
   fTexCoord=vTexCoord/vTexInfo.xy;
+
 }

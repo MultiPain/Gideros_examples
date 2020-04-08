@@ -8,12 +8,9 @@ end
 local ShadowShader = Shader.new("vShader", "fShader", 0, 
 	{
 		{name="vMatrix",type=Shader.CMATRIX,sys=Shader.SYS_WVP,vertex=true},
-		--{name="fColor",type=Shader.CFLOAT4,sys=Shader.SYS_COLOR,vertex=false},
-		--{name="fTexture",type=Shader.CTEXTURE,vertex=false},
+		{name="vTexInfo",type=Shader.CFLOAT4,sys=Shader.SYS_TEXTUREINFO,vertex=true},
 		{name="fResolution",type=Shader.CFLOAT2,vertex=false},
 		
-		{name="Lum",type=Shader.CFLOAT,vertex=false},		
-		{name="ShadowColor",type=Shader.CFLOAT4,vertex=false},
 		{name="LightRadius",type=Shader.CFLOAT,vertex=false},
 		{name="LightSmooth",type=Shader.CFLOAT,vertex=false},
 		{name="ShapeType",type=Shader.CINT,vertex=false},
@@ -28,9 +25,6 @@ local ShadowShader = Shader.new("vShader", "fShader", 0,
 	}
 )
 
-ShadowShader:setConstant("Lum", Shader.CFLOAT, 1, 1)
-ShadowShader:setConstant("ShadowColor", Shader.CFLOAT4, 1, {0,0,0,1})
-
 Light = Core.class(Sprite)
 
 function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
@@ -38,6 +32,8 @@ function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
 	self.d = 2*r
 	self.smooth = 1
 	self.luminance = 1
+	
+	self.drawCalls = 0
 	
 	self.shadowColor = shadowColor or 0
 	self.shadowAlpha = shadowAlpha or 1
@@ -60,13 +56,11 @@ function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
 	end
 end
 
+local frames = 0
 function Light:update(nearbyObjects)
 	if #nearbyObjects == 0 then return end
 	
-	local r,g,b = hex2rgb(self.shadowColor)
-	ShadowShader:setConstant("ShadowColor", Shader.CFLOAT4, 1, {r,g,b,self.shadowAlpha})
 	ShadowShader:setConstant("fResolution", Shader.CFLOAT2, 1, {self.d,self.d})
-	ShadowShader:setConstant("Lum",Shader.CFLOAT, 1, self.luminance)
 	ShadowShader:setConstant("LightRadius",Shader.CFLOAT, 1, self.r)
 	ShadowShader:setConstant("LightSmooth",Shader.CFLOAT, 1, self.smooth)
 	
@@ -74,29 +68,34 @@ function Light:update(nearbyObjects)
 	if self.drawSrcImg then 
 		self.canvas:draw(self.lightSourceImg)
 	end
+	local sx,sy = self:getPosition()
+	sx += self.r
+	sy += self.r
+	self.drawCalls = 0
 	for i,v in ipairs(nearbyObjects) do 
 		local x,y = v:getPosition()
-		local lx,ly = self:globalToLocal(x,y)
-		
-		if v.type == "rect" then 
-			ShadowShader:setConstant("ObjectPos", Shader.CFLOAT2, 1, {lx - v.w / 2,ly - v.h / 2})
-			ShadowShader:setConstant("ShapeType", Shader.CINT, 1, 1)
-			ShadowShader:setConstant("RectSize", Shader.CFLOAT2, 1, {v.w,v.h})
-			ShadowShader:setConstant("RectRotation", Shader.CFLOAT, 1, ^<v:getRotation())
-		elseif v.type == "circle" then 
-			ShadowShader:setConstant("ObjectPos", Shader.CFLOAT2, 1, {lx,ly})
-			ShadowShader:setConstant("ShapeType", Shader.CINT, 1, 0)
-			ShadowShader:setConstant("CircleRadius", Shader.CFLOAT, 1, v.r)
+		local mx = v.w and math.max(v.w,v.h) or v.r*2
+		local d = (x-sx)^2+(y-sy)^2
+		if d < (self.r+mx/2)^2 then
+			local lx,ly = self:globalToLocal(x,y)
+			
+			if v.type == "rect" then 
+				ShadowShader:setConstant("ObjectPos", Shader.CFLOAT2, 1, {lx - v.w / 2,ly - v.h / 2})
+				ShadowShader:setConstant("ShapeType", Shader.CINT, 1, 1)
+				ShadowShader:setConstant("RectSize", Shader.CFLOAT2, 1, {v.w,v.h})
+				ShadowShader:setConstant("RectRotation", Shader.CFLOAT, 1, ^<v:getRotation())
+			elseif v.type == "circle" then 
+				ShadowShader:setConstant("ObjectPos", Shader.CFLOAT2, 1, {lx,ly})
+				ShadowShader:setConstant("ShapeType", Shader.CINT, 1, 0)
+				ShadowShader:setConstant("CircleRadius", Shader.CFLOAT, 1, v.r)
+			end
+			
+			self.canvas:draw(self.shadow)
+			self.drawCalls += 1
 		end
-		
-		self.canvas:draw(self.shadow)
 	end
 end
 
 function Light:setSmooth(v)
 	self.smooth = v
-end
-
-function Light:setLuminance(v)
-	self.luminance = v
 end

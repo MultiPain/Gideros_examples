@@ -21,12 +21,12 @@ function Scene:init()
 	self.objects = {}
 	self.lights = {}
 	
-	self:createObjects()
-	
 	self.pmx = 0
 	self.pmy = 0
 	
-	self.smooth = 1
+	self.smooth = 10
+	
+	self:createObjects()
 	
 	self:addEventListener("keyDown", self.keyDown, self)
 	self:addEventListener("mouseMove", self.mouseMove, self)
@@ -42,6 +42,7 @@ function Scene:createObjects()
 	bg:setTextureScale(.2,.2)
 	self:addChild(bg)
 	--math.randomseed(0)
+	
 	for i = 1, 80 do 
 		local o
 		if RND() < .5 then 
@@ -65,10 +66,15 @@ function Scene:createObjects()
 	end
 	
 	
-	local fg = Pixel.new(0, 0.9, W,H)
+	local fg = Pixel.new(0, 0.7, W,H)
 	fg:setPosition(Left, Top)
 	fg:setTextureScale(.2,.2)
 	self:addChild(fg)
+	
+	self.drawCallsTF = TextField.new(nil, "Draw calls: 0", "|")
+	self.drawCallsTF:setScale(2)
+	self.drawCallsTF:setTextColor(0xffffff)
+	self:addChild(self.drawCallsTF)
 end
 
 function Scene:createLight(x,y,tex,r,c,c2)
@@ -108,11 +114,11 @@ function Scene:mouseDown(e)
 	self.pmx = e.x
 	self.pmy = e.y
 	
-	if e.button == KeyCode.MOUSE_LEFT then 
+	if e.button == KeyCode.MOUSE_RIGHT then 
 		self.dragableLight = self:findLight(e.x, e.y)
-	elseif e.button == KeyCode.MOUSE_RIGHT then 
-		self.dragableLight = self:createLight(e.x,e.y,lightTex,256,RND(0x909090, 0xffffff),0)
-		self.dragableLight:setBlendMode(Sprite.SCREEN)
+	elseif e.button == KeyCode.MOUSE_LEFT then 
+		self.dragableLight = self:createLight(e.x,e.y,lightTex,RND(96,128),RND(0x909090, 0xffffff))
+		self.dragableLight:setBlendMode(Sprite.ADD)
 	elseif e.button == KeyCode.MOUSE_MIDDLE then 
 		local light = self:findLight(e.x, e.y)
 		if light then 
@@ -145,7 +151,7 @@ function Scene:mouseMove(e)
 		local lx,ly = self.dragableLight:getPosition()
 		self.dragableLight:setPosition(lx+dx,ly+dy)
 		self.dragableLight:update(self.objects)
-		
+		self.drawCallsTF:setText("Draw calls: "..self.dragableLight.drawCalls)
 		self.pmx = e.x
 		self.pmy = e.y
 	end
@@ -153,4 +159,5 @@ end
 
 function Scene:mouseUp(e)
 	self.dragableLight = nil
+	self.drawCallsTF:setText("Draw calls: 0")
 end

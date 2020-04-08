@@ -4,8 +4,6 @@
 
 uniform vec2 fResolution;
 
-uniform float Lum;
-uniform vec4 ShadowColor;
 uniform float LightRadius;
 uniform float LightSmooth;
 
@@ -74,14 +72,12 @@ float triangleDist(vec2 p, float width, float height)
 	return max( abs(p).x*n.x + p.y*n.y - (height*n.y), -p.y);
 }
 
-
 float boxDist(vec2 p, vec2 size, float radius)
 {
 	size -= vec2(radius);
 	vec2 d = abs(p) - size;
 	return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - radius;
 }
-
 
 float lineDist(vec2 p, vec2 start, vec2 end, float width)
 {
@@ -92,9 +88,7 @@ float lineDist(vec2 p, vec2 start, vec2 end, float width)
 	return length( (start - p) - proj ) - (width / 2.0);
 }
 
-///////////////
-// The scene //
-///////////////
+////////////////////
 
 float sceneDist(vec2 p)
 {
@@ -107,11 +101,6 @@ float sceneDist(vec2 p)
 	} else
 		return circleDist(translate(p, ObjectPos), CircleRadius);
 }
-
-
-//////////////////////
-// Shadow and light //
-//////////////////////
 
 float shadow(vec2 p, vec2 pos, float radius)
 {
@@ -128,10 +117,9 @@ float shadow(vec2 p, vec2 pos, float radius)
 	{			   
 		// distance to scene at current position
 		float sd = sceneDist(p + dir * dt);
-
+		
 		// early out when this ray is guaranteed to be full shadow
-		if (sd < -radius) 
-			return 0.0;
+		if (sd < -radius) return 0.0;
 		
 		// width of cone-overlap at light
 		// 0 in center, so 50% overlap: add one radius outside of loop to get total coverage
@@ -151,9 +139,7 @@ float shadow(vec2 p, vec2 pos, float radius)
 	return lf;
 }
 
-
-
-vec4 drawLight(vec2 p, vec2 pos, vec4 color, float dist, float range, float radius)
+vec4 drawLight(vec2 p, vec2 pos, float dist, float range, float radius)
 {
 	// distance to light
 	float ld = length(p - pos);
@@ -167,36 +153,11 @@ vec4 drawLight(vec2 p, vec2 pos, vec4 color, float dist, float range, float radi
 	return vec4(shad + source);
 }
 
-
-float luminance(vec4 col)
-{
-	return 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
-}
-
-
-void setLuminance(inout vec4 col, float lum)
-{
-	lum /= luminance(col);
-	col *= lum;
-}
-
-
-/////////////////
-// The program //
-/////////////////
-
 void main(void)
 {
 	vec2 p = fTexCoord * fResolution;
-	float dist = sceneDist(p);
-	
-	vec2 lightPos = fResolution / 2.0;
-	vec4 ShadColor = ShadowColor;
-	
-	setLuminance(ShadColor, Lum);
-	
-	vec4 col = clamp(1.0-drawLight(p, lightPos, ShadColor, dist, LightRadius, LightSmooth), 0.0, 1.0);
-	col.rgb *= ShadowColor.rgb;
-	
-	gl_FragColor = vec4(col.rgb*col.a, col.a);
+	float dist = sceneDist(p);	
+	vec2 lightPos = fResolution / 2.0;	
+	vec4 col = clamp(1.0-drawLight(p, lightPos, dist, LightRadius, LightSmooth), 0.0, 1.0);
+	gl_FragColor = vec4(0.0, 0.0, 0.0, col.a);
 }
