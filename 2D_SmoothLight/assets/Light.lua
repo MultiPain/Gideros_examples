@@ -31,14 +31,8 @@ function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
 	self.r = r
 	self.d = 2*r
 	self.smooth = 1
-	self.luminance = 1
 	
 	self.drawCalls = 0
-	
-	self.shadowColor = shadowColor or 0
-	self.shadowAlpha = shadowAlpha or 1
-	
-	local r,g,b = hex2rgb(color)
 	
 	self.rt = RenderTarget.new(self.d, self.d, true)
 	self.shadow = Bitmap.new(self.rt)
@@ -48,6 +42,8 @@ function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
 	self.completeShadow = Bitmap.new(self.canvas)
 	self:addChild(self.completeShadow)
 	if tex then 
+		local r,g,b = hex2rgb(color)
+		
 		self.lightSourceImg = Bitmap.new(tex)
 		self.lightSourceImg:setScale(self.d / tex:getWidth())
 		self.lightSourceImg:setColorTransform(r,g,b,alpha)
@@ -56,7 +52,13 @@ function Light:init(tex, r, color, alpha, shadowColor, shadowAlpha)
 	end
 end
 
-local frames = 0
+function Light:setColor(color, alpha)
+	if self.lightSourceImg then 
+		local r,g,b = hex2rgb(color)
+		self.lightSourceImg:setColorTransform(r,g,b,alpha)
+	end
+end
+
 function Light:update(nearbyObjects)
 	if #nearbyObjects == 0 then return end
 	
