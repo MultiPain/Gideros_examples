@@ -15,10 +15,18 @@ Layers = Core.class(Sprite)
 
 function Layers:init(...)
 	self.layers = {}
-	self:load(...)
+	self:names(...)
 end
--- add new layers on top 
-function Layers:load(...)
+--
+function Layers:load(t)
+	self:removeAllLayers()
+	for i,layer in ipairs(t) do 
+		self.layers[layer.name] = layer
+		self:addChild(layer)
+	end
+end
+--
+function Layers:names(...)
 	for i,name in ipairs({...}) do 
 		self:addLayer(name)
 	end
@@ -31,23 +39,23 @@ function Layers:insert(name_or_id, name)
 	local lr = self:getLayer(name_or_id)
 	local i = self:getChildIndex(lr)
 	self:addLayer(name, i)
+	return lr
 end
 -- create new layer, add it on top
 function Layers:addLayer(name, ind)
-	local i = ind or self:getNumChildren()+1
-	
 	assert(self.layers[name] == nil, "Layer \""..name.."\" already exists")
-	
-	-- simple layer object
+	local i = ind or self:getNumChildren()+1	
 	local lr = Layer.new(name)	
 	self.layers[name] = lr
 	self:addChildAt(lr, i)
+	return lr
 end
 -- delete layer
 function Layers:removeLayer(name_or_id)
 	local lr = self:getLayer(name_or_id)
 	self.layers[lr.name] = nil
 	self:removeChild(lr)
+	return lr
 end
 -- delete all layers
 function Layers:removeAllLayers()
