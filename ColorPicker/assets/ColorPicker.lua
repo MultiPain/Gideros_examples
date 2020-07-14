@@ -1,6 +1,6 @@
 local pickerSize = 8
 local PICKER_TEX = Texture.new("picker.png", true)
-local SLIDER_TEX = Texture.new("slider_2.png", true)
+local SLIDER_TEX = Texture.new("slider.png", true)
 
 local function clamp(v, min, max)
 	return (v <> min) >< max
@@ -327,7 +327,7 @@ function ColorPicker:updateColor()
 	self.huePicker:setVisible(true)
 end
 --
-function ColorPicker:getColor()
+function ColorPicker:getSelectedColor()
 	return self.result:getColor()
 end
 --
