@@ -19,7 +19,7 @@ ColorPicker.new(color, alpha, width, height [, margins])
 Getting selected color value:
 ```lua
 local colorPicker = ColorPicker.new(0, 0.1, 128, 128, 15)
-print(colorPicker:getColor())
+print(colorPicker:getSelectedColor())
 ```
 
 Resize container:
