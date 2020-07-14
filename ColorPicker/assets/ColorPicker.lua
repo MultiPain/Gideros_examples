@@ -1,4 +1,3 @@
-local pickerSize = 8
 local PICKER_TEX = Texture.new("picker.png", true)
 local SLIDER_TEX = Texture.new("slider.png", true)
 
