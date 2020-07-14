@@ -1,0 +1,12 @@
+<project>
+ <properties architecture="0" splashScaleMode="0" html5_host="" build_number="1" backgroundColor="#ffffff" osx_bundle="com.yourdomain." version_code="1" html5_symbols="0" osx_signingId="" html5_mem="256" splash_v_image="" win_domain="giderosmobile.com" html5_wasm="0" encryptCode="0" osx_category="5" winrt_org="GiderosMobile" app_icon="" tv_icon="" autorotation="0" osx_domain="giderosmobile.com" html5_crash="" encryptAssets="0" fps="60" android_template="0" ios_bundle="com.yourdomain." osx_org="GiderosMobile" exportMode="0" vsync="0" scaleMode="0" app_name="" mouseTouchOrder="0" osx_installerId="" windowHeight="0" logicalWidth="320" orientation="0" disableSplash="0" winrt_package="com.yourdomain.yourapp" mainluaOnly="0" retinaDisplay="0" packageName="com.yourdomain.yourapp" windowWidth="0" touchToMouse="1" win_org="GiderosMobile" iosDevice="0" logicalHeight="480" html5_fbload="100" mouseToTouch="1" html5_pack="0" version="1.0" html5_fbinstant="0" splash_h_image="">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/ColorPicker.lua"/>
+ <file name="assets/main.lua"/>
+ <file name="assets/picker.png"/>
+ <file name="assets/slider.png"/>
+ <file name="assets/slider_2.png"/>
+</project>
