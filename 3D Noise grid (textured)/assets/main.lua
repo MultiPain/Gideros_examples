@@ -5,23 +5,19 @@ app:configureFrustum(120)
 require "FastNoise"
 
 local colorArray = {
-	{h = 0.3, color = {52,99,195,255}},
-	{h = 0.4, color = {54,102,198,255}},
-	{h = 0.45, color = {209,208,128,255}},
-	{h = 0.55, color = {88,151,24,255}},
-	{h = 0.6, color = {63,106,20,255}},
-	{h = 0.7, color = {92,68,61,255}},
-	{h = 0.9, color = {75,60,55,255}},
-	{h = 1, color = {255,255,255,255}},
+	{0.300000, 0x3463c3},
+	{0.400000, 0x3666c6},
+	{0.450000, 0xd1d080},
+	{0.550000, 0x589718},
+	{0.600000, 0x3f6a14},
+	{0.700000, 0x5c443d},
+	{0.900000, 0x4b3c37},
+	{1.000000, 0xffffff},
 }
 
-function rgb2hex(r, g, b)
-	return (r << 16) + (g << 8) + b
-end
-
-function meshGrid(w, h, cell, extrusion)
+local function meshGrid(width, height, cellSize, extrusion)
 	extrusion = extrusion or 50
-	local m = Mesh.new(true)
+	local mesh = Mesh.new(true)
 	
 	local v = 1
 	local i = 1
@@ -30,63 +26,71 @@ function meshGrid(w, h, cell, extrusion)
 	n:setFrequency(0.04)
 	n:setFractalOctaves(10)
 	n:setNoiseType(Noise.SIMPLEX_FRACTAL)
+	n:setColorLookup(colorArray)
 	
-	local tex = n:generateTexture(w,h,true,nil,{colors = colorArray})
-	m:setTexture(tex)
+	local tex = n:getTexture(width, height, true)
+	mesh:setTexture(tex)
 	
-	for y = 1, h+1 do 
-		for x = 1, w+1 do 
-			local nv = n:noise(x,y)
+	for y = 1, height+1 do 
+		for x = 1, width+1 do 
+			local nv = n:noise(x, y)
 			
-			m:setVertex(v,(x-1)*cell, (y-1)*cell, nv*extrusion)
+			mesh:setVertex(v, (x - 1) * cellSize, (y - 1) * cellSize, nv * extrusion)
 			
-			m:setTextureCoordinate(v, x-1, y-1)
+			mesh:setTextureCoordinate(v, x - 1, y - 1)
 			
-			if (x <= w and y <= h) then 
-				local a = y*(w+1)+x+1
-				m:setIndex(i+0, v)
-				m:setIndex(i+1, v+1)
-				m:setIndex(i+2, a)
-				m:setIndex(i+3, v)
-				m:setIndex(i+4, a)
-				m:setIndex(i+5, a-1)
+			if (x <= width and y <= height) then 
+				local a = y * (width + 1) + x + 1
+				mesh:setIndex(i + 0, v)
+				mesh:setIndex(i + 1, v + 1)
+				mesh:setIndex(i + 2, a)
+				mesh:setIndex(i + 3, v)
+				mesh:setIndex(i + 4, a)
+				mesh:setIndex(i + 5, a - 1)
 				i += 6
 			end
 			v += 1
 		end
 	end
-	return m
+	return mesh
 end
 
-function rectMesh(w, h, cell, color, alpha)
-	local m = Mesh.new(true)
-	m:setVertex(1, 0, 0, 0)
-	m:setVertex(2, w*cell, 0, 0)
-	m:setVertex(3, w*cell, h*cell, 0)
-	m:setVertex(4, 0, h*cell, 0)
-	m:setColorArray(color,alpha, color,alpha, color,alpha, color,alpha)
-	m:setIndexArray(1,2,3, 1,3,4)
-	return m
+local function rectMesh(width, height, cellSize, color, alpha)
+	local mesh = Mesh.new(true)
+	mesh:setVertex(1, 0, 0, 0)
+	mesh:setVertex(2, width * cellSize, 0, 0)
+	mesh:setVertex(3, width * cellSize, height * cellSize, 0)
+	mesh:setVertex(4, 0, height * cellSize, 0)
+	mesh:setColorArray(
+		color, alpha,
+		color, alpha,
+		color,alpha,
+		color,alpha
+	)
+	mesh:setIndexArray(1,2,3, 1,3,4)
+	return mesh
 end
 
-local w,h, cell = 128,128,16
 
-water = rectMesh(w, h, cell, 0x0000ff, 0.5)
-water:setAnchorPoint(.5,.5)
+local width, height, cellSize = 128, 128, 16
 
-local m = meshGrid(w,h, cell, 255)
-m:setAnchorPoint(.5,.5)
-stage:addChild(m)
-stage:addChild(water)
+local waterMesh = rectMesh(width, height, cellSize, 0x0000ff, 0.5)
+waterMesh:setAnchorPoint(.5,.5)
+
+local mesh = meshGrid(width, height, cellSize, 255)
+mesh:setAnchorPoint(.5,.5)
+stage:addChild(mesh)
+stage:addChild(waterMesh)
 
 stage:setPosition(app:getContentWidth() / 2, app:getContentHeight() / 2)
 stage:setRotationX(45)
 
 local timer = 0
-
 stage:addEventListener(Event.ENTER_FRAME, function(e)
 	local dt = e.deltaTime
+	
 	timer += dt
+	
 	stage:setZ(math.sin(timer)*200)
 	stage:setRotation(stage:getRotation() + 25 * dt)
 end)
