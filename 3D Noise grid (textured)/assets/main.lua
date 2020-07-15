@@ -5,14 +5,14 @@ app:configureFrustum(120)
 require "FastNoise"
 
 local colorArray = {
-	{0.300000, 0x3463c3},
-	{0.400000, 0x3666c6},
-	{0.450000, 0xd1d080},
-	{0.550000, 0x589718},
-	{0.600000, 0x3f6a14},
-	{0.700000, 0x5c443d},
-	{0.900000, 0x4b3c37},
-	{1.000000, 0xffffff},
+	{0.3, 0x3463c3},
+	{0.4, 0x3666c6},
+	{0.4, 0xd1d080},
+	{0.5, 0x589718},
+	{0.6, 0x3f6a14},
+	{0.7, 0x5c443d},
+	{0.9, 0x4b3c37},
+	{1.0, 0xffffff},
 }
 
 local function meshGrid(width, height, cellSize, extrusion)
