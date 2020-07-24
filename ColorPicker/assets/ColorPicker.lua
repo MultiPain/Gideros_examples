@@ -33,7 +33,7 @@ end
 -- Converts an HEX color value to RGB
 -- RGB values in range [0, 1]
 local function hex2rgb(hex)
-	local r,g,b = utils.hex2rgb255(hex)
+	local r,g,b = hex2rgb255(hex)
 	return r/255,g/255,b/255
 end
 
