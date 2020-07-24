@@ -8,13 +8,16 @@
 
 Initialization:
 ```lua
-ColorPicker.new(color, alpha, width, height [, margins])
+ColorPicker.new(color, alpha, width, height, [hueCellSize, previewColorCellSize, margins, cellSpacing])
 ```
 * color (number) - background color of container
 * alpha (number) - background alpha of container
 * width (number) - width of color picker gradient
 * height (number) - height of color picker gradient
-* margins (number, optional, default = 0) - innter margin
+* hueCellSize (number, optional, default = 20) - height of hue slider cell
+* previewColorCellSize (number, optional, default = 32) - height of selected color cell
+* margins (number, optional, default = 0) - inner margin
+* cellSpacing (number, optional, default = 10) - distance between cells
 
 Getting selected color value:
 ```lua
