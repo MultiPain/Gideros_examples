@@ -101,10 +101,7 @@ function ColorPicker:init(color, alpha, width, height, margins)
 	
 	margins = margins or 0
 	hueSize = hueSize or 20
-	
-	self.mousePrevX = 0
-	self.mousePrevY = 0
-	
+		
 	self:setLayoutParameters{
 		insets = margins, 
 		cellSpacingY = 10,
