@@ -95,19 +95,23 @@ end
 
 ColorPicker = Core.class(Pixel)
 
-function ColorPicker:init(color, alpha, width, height, margins)
+function ColorPicker:init(color, alpha, width, height, hueCellSize, previewColorCellSize, margins, cellSpacing)
 	self.colorsWidth = width
 	self.colorsHeight = height
 	
+	self.needToRedraw = true
+	
 	margins = margins or 0
-	hueSize = hueSize or 20
+	hueCellSize = hueCellSize or 20
+	previewColorCellSize = previewColorCellSize or 32
+	cellSpacing = cellSpacing or 10
 		
 	self:setLayoutParameters{
 		insets = margins, 
-		cellSpacingY = 10,
+		cellSpacingY = cellSpacing,
 		equalizeCells = false,
 		columnWidths = {width},
-		rowHeights = {height, 20, 32},
+		rowHeights = {height, hueCellSize, previewColorCellSize},
 		resizeContainer = false,
 	}
 	
@@ -143,7 +147,7 @@ function ColorPicker:init(color, alpha, width, height, margins)
 	
 	-- color picker image
 	self.mainPicker = Bitmap.new(PICKER_TEX)
-	self.mainPicker:setAnchorPoint(.5,.5)
+	self.mainPicker:setAnchorPoint(0.5, 0.5)
 	self.blackGrad:addChild(self.mainPicker)
 	
 	-- generate hue slider
@@ -154,23 +158,25 @@ function ColorPicker:init(color, alpha, width, height, margins)
 		gridy = 1, weighty = 1,
 		fill = 1,
 	}
-	local j = 0
+	local i = 0
 	local r,g,b = hsv2rgb(0, 1, 1, 1)
 	local prev = rgb2hex255(r,g,b)
-	for hue = 60, 360, 60 do
-		r,g,b = hsv2rgb(hue / 360, 1, 1, 1)
+	local step = 1 / 6
+	for hue = step, 1, step do
+		r,g,b = hsv2rgb(hue, 1, 1, 1)
+		
 		local curr = rgb2hex255(r,g,b)
 		
 		local colorPart = Pixel.new(0xffffff, 1, 10, 10)
 		colorPart:setColor(curr, 1, prev, 1, 0)
 		colorPart:setLayoutConstraints{
-			gridx = j, weightx = 1,
+			gridx = i, weightx = 1,
 			gridy = 0, weighty = 1,
 			fill = 1,
 		}
 		self.hue:addChild(colorPart)
 		prev = curr
-		j += 1
+		i += 1
 	end
 	self:addChild(self.hue)
 	
@@ -189,7 +195,6 @@ function ColorPicker:init(color, alpha, width, height, margins)
 	
 	self.huePicker:addChild(self.topHuePicker)
 	self.huePicker:addChild(self.bottomHuePicker)
-	--self.huePicker:setAnchorPoint(0.5, 0.25)
 	self.hue:addChild(self.huePicker)
 	
 	-- colored sprite
@@ -244,18 +249,20 @@ function ColorPicker:setDimensions(width, height)
 	if (oldWidth ~= width or oldHeight ~= height) then
 		Pixel.setDimensions(self, width, height)
 		
+		-- set flag to redraw rendertarget on next call of "updateColor()"
+		self.needToRedraw = true
+		
 		-- get picker position
 		local cx, cy = self.mainPicker:getPosition()
 		
-		-- hide picker to get correct size of 
-		-- "blackGrad"
+		-- hide picker to get correct size of "blackGrad"
 		self.mainPicker:removeFromParent()
 		self.colorsWidth, self.colorsHeight = self.blackGrad:getSize()
 		self.blackGrad:addChild(self.mainPicker)
 		
 		-- make sure that color picker is inside "blackGrad"
-		local x = clamp(cx, 0, self.colorsWidth-1)
-		local y = clamp(cy, 0, self.colorsHeight-1)
+		local x = clamp(cx, 0, self.colorsWidth - 1)
+		local y = clamp(cy, 0, self.colorsHeight - 1)
 		-- move to new position
 		self.mainPicker:setPosition(x, y)
 		
@@ -265,7 +272,7 @@ function ColorPicker:setDimensions(width, height)
 		self.hue:addChild(self.huePicker)
 		
 		cx = self.huePicker:getX()
-		x = clamp(cx, 0, self.colorsWidth-1)
+		x = clamp(cx, 0, self.colorsWidth - 1)
 		self.huePicker:setX(x)
 		
 		-- adjust slider images position
@@ -284,7 +291,7 @@ function ColorPicker:setDimensions(width, height)
 end
 --
 function ColorPicker:updateColor()
-	-- make pickers invisible to pick correct color
+	-- make pickers are invisible to pick correct color
 	self.mainPicker:setVisible(false)
 	self.huePicker:setVisible(false)
 	
@@ -292,8 +299,10 @@ function ColorPicker:updateColor()
 	local x,y = self:getPosition()
 	
 	-- draw whole ColorPicker object
-	self.rt:clear(0,0)
-	self.rt:draw(self, -x, -y)
+	if (self.needToRedraw) then
+		self.rt:clear(0, 0)
+		self.rt:draw(self, -x, -y)
+	end
 	
 	-- translate hue position
 	local colorX, colorY = self.hue:localToGlobal(self.huePicker:getPosition())
@@ -305,7 +314,11 @@ function ColorPicker:updateColor()
 	self.sourceColor:setColor(color, alpha)
 	
 	-- redraw
-	self.rt:draw(self, -x, -y)
+	if (self.needToRedraw) then
+		self.rt:draw(self, -x, -y)
+		
+		self.needToRedraw = false
+	end
 	
 	-- translate main picker position
 	colorX, colorY = self.blackGrad:localToGlobal(self.mainPicker:getPosition())
@@ -346,8 +359,8 @@ function ColorPicker:onMouseMove(event)
 		local lx, ly = self.blackGrad:globalToLocal(mx, my)
 		
 		-- make sure that they in correct bounds
-		local x = clamp(lx, 0, self.colorsWidth-1)
-		local y = clamp(ly, 0, self.colorsHeight-1)
+		local x = clamp(lx, 0, self.colorsWidth - 1)
+		local y = clamp(ly, 0, self.colorsHeight - 1)
 		
 		-- move to new position
 		self.mainPicker:setPosition(x, y)
@@ -355,11 +368,13 @@ function ColorPicker:onMouseMove(event)
 		-- update colors
 		self:updateColor()
 	elseif (self.state == "HUE_COLOR") then
+		self.needToRedraw = true
+		
 		-- translate coordinates
 		local lx, ly = self.hue:globalToLocal(mx, my)
 		
 		-- make sure that they in correct bounds
-		local x = clamp(lx, 0, self.colorsWidth-2)
+		local x = clamp(lx, 0, self.colorsWidth - 2)
 		
 		-- move to new position
 		self.huePicker:setX(x)
