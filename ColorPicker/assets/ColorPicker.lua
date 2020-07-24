@@ -95,13 +95,12 @@ end
 
 ColorPicker = Core.class(Pixel)
 
-function ColorPicker:init(initialColor, alpha, width, height, margins)
+function ColorPicker:init(color, alpha, width, height, margins)
 	self.colorsWidth = width
 	self.colorsHeight = height
 	
 	margins = margins or 0
 	hueSize = hueSize or 20
-	initialColor = initialColor or 0
 	
 	self.mousePrevX = 0
 	self.mousePrevY = 0
@@ -117,7 +116,7 @@ function ColorPicker:init(initialColor, alpha, width, height, margins)
 	
 	-- source color
 	self.sourceColor = Pixel.new(0xffffff, 1, 0, 0)
-	self.sourceColor:setColor(initialColor, 1)
+	self.sourceColor:setColor(0xffffff, 1)
 	self.sourceColor:setLayoutConstraints{
 		gridx = 0, weightx = 1,
 		gridy = 0, weighty = 1,
