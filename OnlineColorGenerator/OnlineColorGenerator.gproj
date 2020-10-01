@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties winrt_org="GiderosMobile" autorotation="0" html5_symbols="0" winrt_package="com.yourdomain.yourapp" version_code="1" touchToMouse="1" html5_wasm="0" html5_host="" encryptCode="0" windowHeight="0" osx_category="5" osx_signingId="" fps="60" packageName="com.yourdomain.yourapp" win_org="GiderosMobile" mouseTouchOrder="0" osx_bundle="com.yourdomain." windowWidth="0" disableSplash="0" app_icon="" scaleMode="0" ios_bundle="com.yourdomain." win_domain="giderosmobile.com" encryptAssets="0" html5_fbinstant="0" orientation="1" splashScaleMode="0" exportMode="0" iosDevice="0" build_number="1" version="1.0" app_name="" html5_mem="256" logicalWidth="720" backgroundColor="#ffffff" html5_pack="0" vsync="0" osx_org="GiderosMobile" osx_domain="giderosmobile.com" html5_crash="" html5_fbload="100" android_template="0" osx_installerId="" splash_h_image="" mainluaOnly="0" retinaDisplay="0" mouseToTouch="1" architecture="0" tv_icon="" splash_v_image="" logicalHeight="1280">
+  <imageScales/>
+  <plugins>
+   <plugin name="Easing" enabled="0"/>
+   <plugin name="SceneManager" enabled="0"/>
+  </plugins>
+  <exports/>
+ </properties>
+ <file name="assets/main.lua"/>
+</project>
