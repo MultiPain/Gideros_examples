@@ -62,6 +62,8 @@ end
 local drawWindow = true
 -- generate button is active or not
 local active = true
+-- last query success status
+local lastError = false
 -- all generated colors
 local cachedColors = {}
 -- preview color index
@@ -70,21 +72,32 @@ local currentColorIndex = -1
 local modeItem = 0
 -- mode list
 local modeList = {"default", "ui"}
--- stores color in hex, 
+-- stores color in hex
 local queryLockedColors = {}
 -- default locked colors structure
 for i = 1, 5 do 
 	queryLockedColors[i] = {activeFlag = false, color = 0, str = "\"N\""} 
 end
 
+local function resetLockedColors()
+	for i,v in ipairs(queryLockedColors) do 
+		v.color = 0
+		v.activeFlag = false
+	end
+end
+
 local function enterFrame(e)
 	imgui:newFrame(e)
+	
 	-- create window
 	drawWindow = imgui:beginWindow("Color generator", nil, 0) -- window without close button
 	if (drawWindow) then 
 		-- create combox box with 2 modes
-		modeItem = imgui:combo("mode", modeItem, modeList)
+		imgui:text("mode")
+		imgui:sameLine()
+		modeItem = imgui:combo("##mode", modeItem, modeList)
 		
+		imgui:separator()
 		-- locked colors
 		for i,v in ipairs(queryLockedColors) do 
 			-- create a checkbox
@@ -100,6 +113,11 @@ local function enterFrame(e)
 			end
 		end
 		
+		if (imgui:button("Reset all") and active) then 
+			resetLockedColors()
+		end
+		imgui:separator()
+		
 		imgui:pushStyleVar(ImGui.StyleVar_Alpha, active and 1 or 0.5)
 		if (imgui:button("Generate") and active) then 
 			active = false
@@ -114,12 +132,15 @@ local function enterFrame(e)
 			
 			getColors(query, function(success, result) 
 				active = true
-				if (not success) then
-					print("error")
-				else
+				lastError = not success -- you cant call "openPopup" from callback fro whatever reason, so we use flag
+				if (success) then
 					local w = PALETTE_W // #result
 					local paletteStruct = {}
 					paletteStruct.colors = {}
+					paletteStruct.lockedColors = {}
+					for i,v in ipairs(queryLockedColors) do 
+						paletteStruct.lockedColors[i] = {lockedFlag = v.activeFlag, color = v.color}
+					end
 					
 					local texture = RenderTarget.new(PALETTE_W, PALETTE_H)
 					for i,v in ipairs(result) do 
@@ -136,6 +157,23 @@ local function enterFrame(e)
 		end
 		imgui:popStyleVar()
 		
+		-- show error message
+		if (lastError) then
+			imgui:openPopup("Error")
+			lastError = false
+		end
+		
+		-- error message window itself
+		if (imgui:beginPopupModal("Error", nil, ImGui.WindowFlags_AlwaysAutoResize)) then 
+			imgui:text("Error while loading colors...")
+			if (imgui:button("OK", 220, 30)) then 
+				imgui:closeCurrentPopup()
+			end
+			imgui:setItemDefaultFocus()
+			imgui:endPopup()
+		end
+		
+		-- show current color palette
 		if (currentColorIndex > 0) then 
 			imgui:image(
 				cachedColors[currentColorIndex].texture, -- RenderTarget
@@ -151,11 +189,11 @@ local function enterFrame(e)
 			imgui:beginChild(1, 0, 128)
 			local i = l
 			while (i >= 1) do
-				local v = cachedColors[i]
+				local colorData = cachedColors[i]
 				
 				-- generate color string 
 				local colorPrintName = ""
-				for _,color in ipairs(v.colors) do 
+				for _,color in ipairs(colorData.colors) do 
 					colorPrintName = colorPrintName .. COLOR_FORMAT:format(color) 
 				end
 				imgui:text(colorPrintName)
@@ -164,6 +202,14 @@ local function enterFrame(e)
 				imgui:sameLine()		
 				if (imgui:button("View###view"..i)) then
 					currentColorIndex = i
+					
+					for k,qlc in ipairs(queryLockedColors) do 
+						local paletteLockedColors = colorData.lockedColors[k]
+						qlc.activeFlag = paletteLockedColors.lockedFlag
+						if (paletteLockedColors.lockedFlag) then
+							qlc.color = paletteLockedColors.color
+						end
+					end
 				end
 				
 				-- copy to clipboard
@@ -190,6 +236,8 @@ local function enterFrame(e)
 		
 		imgui:endWindow()
 	end
+		
+	imgui:showDemoWindow()
 	
 	imgui:render()
 	imgui:endFrame()
