@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties html5_fbinstant="0" disableSplash="0" version="1.0" osx_installerId="" html5_fbload="100" winrt_package="com.yourdomain.yourapp" ios_bundle="com.yourdomain." html5_wasm="0" mouseToTouch="1" backgroundColor="#ffffff" fps="60" iosDevice="0" exportMode="0" encryptCode="0" osx_org="GiderosMobile" retinaDisplay="0" html5_pack="0" architecture="0" android_template="0" autorotation="0" winrt_org="GiderosMobile" win_domain="giderosmobile.com" osx_domain="giderosmobile.com" app_icon="" splash_v_image="" packageName="com.yourdomain.yourapp" splash_h_image="" version_code="1" logicalWidth="320" html5_crash="" html5_mem="256" html5_symbols="0" osx_signingId="" app_name="" windowWidth="0" win_org="GiderosMobile" osx_category="5" orientation="0" encryptAssets="0" osx_bundle="com.yourdomain." tv_icon="" scaleMode="0" html5_host="" logicalHeight="480" mouseTouchOrder="0" mainluaOnly="0" build_number="1" splashScaleMode="0" touchToMouse="1" windowHeight="0" vsync="0">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/init.lua"/>
+ <file name="assets/Grid.lua"/>
+ <file name="assets/Board.lua"/>
+ <file name="assets/main.lua"/>
+ <file name="assets/EditorScene.lua"/>
+</project>
