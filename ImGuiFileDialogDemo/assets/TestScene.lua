@@ -76,11 +76,9 @@ function TestScene:drawFileDialog(UI)
 		local currentDir = lfs.currentdir()
 		
 		if (UI:button("Back")) then
-			-- reset selected item and selected filename
-			if (isOpenMode) then 
-				self.currentItem = 0
-				self.fileName = ""
-			end
+			-- reset selected item and selected filename 
+			self.currentItem = 0
+			self.fileName = ""
 			-- change dir
 			currentDir = currentDir:match("(.*[/\\])")
 			lfs.chdir(currentDir)
