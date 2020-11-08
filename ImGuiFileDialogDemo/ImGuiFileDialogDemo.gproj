@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties exportMode="0" osx_bundle="com.yourdomain." logicalHeight="480" tv_icon="" mouseToTouch="1" touchToMouse="1" osx_domain="giderosmobile.com" html5_fbload="100" iosDevice="0" splashScaleMode="0" html5_fbinstant="0" vsync="0" autorotation="0" html5_symbols="0" backgroundColor="#ffffff" logicalWidth="320" app_name="" version="1.0" disableSplash="0" osx_category="5" build_number="1" win_domain="giderosmobile.com" ios_bundle="com.yourdomain." packageName="com.yourdomain.yourapp" windowWidth="0" html5_host="" android_template="0" html5_wasm="0" windowHeight="0" fps="60" osx_org="GiderosMobile" app_icon="" splash_v_image="" osx_installerId="" retinaDisplay="0" architecture="0" html5_pack="0" html5_crash="" encryptCode="0" mouseTouchOrder="0" version_code="1" winrt_org="GiderosMobile" encryptAssets="0" osx_signingId="" scaleMode="0" orientation="0" win_org="GiderosMobile" splash_h_image="" winrt_package="com.yourdomain.yourapp" html5_mem="256" mainluaOnly="0">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/TestScene.lua"/>
+ <file name="assets/main.lua"/>
+</project>
