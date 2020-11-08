@@ -230,7 +230,6 @@ function TestScene:drawGUI(e)
 		UI:popStyleColor()
 		
 		if (UI:beginMenuBar()) then 
-			local saveModal = false
 			local openModal = false
 			
 			if (UI:beginMenu("File")) then 
