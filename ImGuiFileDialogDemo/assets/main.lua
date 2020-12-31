@@ -1,5 +1,5 @@
 require "lfs"
-require "ImGui_beta"
+require "ImGui"
 
 application:setBackgroundColor(0x323232)
 
