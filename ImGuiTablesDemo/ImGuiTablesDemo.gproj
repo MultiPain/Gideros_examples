@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties logicalWidth="320" html5_wasm="0" splash_h_image="" tv_icon="" ios_bundle="com.yourdomain.yourapp-ios" fps="60" app_name="" mouseToTouch="1" touchToMouse="1" mouseTouchOrder="0" splash_v_image="" encryptAssets="0" autorotation="0" build_number="1" osx_signingId="" windowWidth="0" mainluaOnly="0" macos_bundle="com.yourdomain.yourapp-macos" version="1.0" vsync="0" macos_category="5" winrt_org="GiderosMobile" exportMode="0" win_domain="giderosmobile.com" iosDevice="0" logicalHeight="480" html5_crash="" winrt_package="com.yourdomain.yourapp" scaleMode="0" osx_category="5" backgroundColor="#ffffff" encryptCode="0" html5_host="" atv_bundle="com.yourdomain.yourapp-atv" architecture="0" splashScaleMode="0" version_code="1" html5_mem="256" html5_pack="0" osx_domain="giderosmobile.com" windowHeight="0" html5_symbols="0" disableSplash="0" win_org="GiderosMobile" osx_bundle="com.yourdomain." osx_installerId="" app_icon="" osx_org="GiderosMobile" orientation="0" html5_fbload="100" html5_fbinstant="0" retinaDisplay="0">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/TablesDemo.lua"/>
+ <file name="assets/main.lua"/>
+</project>
