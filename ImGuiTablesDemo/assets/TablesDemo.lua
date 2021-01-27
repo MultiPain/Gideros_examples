@@ -1,7 +1,4 @@
 --!NOEXEC
-local clipper = ImGuiListClipper.new() -- Added in 1.80 to the binding
-
-local disable_indent = false
 CT_Text @ 0
 CT_FillButton_2 @ 1
 CT_SmallButton @ 2
@@ -83,9 +80,6 @@ for n = 1, 50 do
 	items[n] = item
 end
 
-local function strcmp(s1, s2)
-	return s1:len() - s2:len()
-end
 
 local function compareWithSortSpecs(a, b)
 	local t = s_current_sort_specs:getColumnSortSpecs()
@@ -119,6 +113,7 @@ local contents_type_1 = CT_Text
 local contents_type_2 = CT_ShowWidth
 local contents_type_3 = CT_SelectableSpanRow
 
+local disable_indent = false
 local display_headers = false
 local show_headers = false
 local show_widget_frame_bg = true
@@ -810,6 +805,8 @@ In this demo we don't show horizontal borders to emphasis how they don't affect 
 			ui:tableHeadersRow()
 
 			-- Demonstrate using clipper for large vertical lists
+
+			local clipper = ImGuiListClipper.new()
 			clipper:beginClip(1000)
 			while (clipper:step()) do
 				for row = clipper:getDisplayStart(), clipper:getDisplayEnd() do
@@ -820,6 +817,7 @@ In this demo we don't show horizontal borders to emphasis how they don't affect 
 					end
 				end
 			end
+			clipper = nil
 			ui:endTable()
 		end
 		ui:treePop()
@@ -1447,8 +1445,8 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
         flags[20] = ui:checkboxFlags("ImGui.TableFlags_SortTristate", flags[20], ImGui.TableFlags_SortTristate)
         ui:sameLine() helpMarker(ui, "When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
         popStyleCompact(ui)
-
-        if (ui:beginTable("table_sorting", 4, flags[20], 0, TEXT_BASE_HEIGHT * 15, 0)) then
+		
+		if (ui:beginTable("table_sorting", 4, flags[20], 0, TEXT_BASE_HEIGHT * 15)) then
             -- Declare columns
             -- We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
             -- This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
@@ -1477,30 +1475,9 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
                 end
 			end
 			
-            -- Demonstrate using clipper for large vertical lists
-            for row_n = 1, 50 do
-                -- Display a data item
-                local item = items[row_n]
-				
-                ui:pushID(item.id)
-				
-                ui:tableNextRow()
-                ui:tableNextColumn()
-                ui:text(("%04d"):format(item.id))
-				
-                ui:tableNextColumn()
-                ui:text(item.name)
-				
-                ui:tableNextColumn()
-                ui:smallButton("None")
-				
-                ui:tableNextColumn()
-                ui:text(item.quantity)
-				
-                ui:popID()
-            end
-			--[[
-			clipper:beginClip(50)            
+			
+			local clipper = ImGuiListClipper.new()
+			clipper:beginClip(#items)            
             while (clipper:step()) do
                 for row_n = clipper:getDisplayStart() + 1, clipper:getDisplayEnd() do
                     -- Display a data item
@@ -1509,6 +1486,7 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
                     ui:pushID(item.id)
 					
                     ui:tableNextRow()
+					
                     ui:tableNextColumn()
                     ui:text(("%04d"):format(item.id))
 					
@@ -1524,7 +1502,7 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
                     ui:popID()
                 end
             end
-			]]
+			
             ui:endTable()
         end
         ui:treePop()
