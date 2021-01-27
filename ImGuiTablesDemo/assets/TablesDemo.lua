@@ -1435,7 +1435,7 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
 	end
 	
     if (open_action ~= -1) then
-        ui:SetNextItemOpen(open_action ~= 0)
+        ui:setNextItemOpen(open_action ~= 0)
 	end
 	
     if (ui:treeNode("Sorting")) then
