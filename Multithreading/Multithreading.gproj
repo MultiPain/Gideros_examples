@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties splashScaleMode="0" ios_bundle="com.yourdomain.yourapp-ios" autorotation="0" windowWidth="0" html5_host="" macos_category="5" version_code="1" version="1.0" fps="60" osx_bundle="com.yourdomain." mainluaOnly="0" logicalWidth="320" architecture="0" html5_fbinstant="0" mouseToTouch="1" splash_v_image="" tv_icon="" orientation="0" macos_bundle="com.yourdomain.yourapp-macos" windowHeight="0" html5_pack="0" win_domain="giderosmobile.com" encryptCode="0" html5_crash="" touchToMouse="1" osx_installerId="" osx_org="GiderosMobile" winrt_package="com.yourdomain.yourapp" html5_wasm="0" html5_symbols="0" encryptAssets="0" html5_mem="256" scaleMode="0" mouseTouchOrder="0" html5_fbload="100" disableSplash="0" retinaDisplay="0" backgroundColor="#ffffff" logicalHeight="480" osx_domain="giderosmobile.com" osx_signingId="" win_org="GiderosMobile" winrt_org="GiderosMobile" splash_h_image="" app_icon="" atv_bundle="com.yourdomain.yourapp-atv" vsync="0" exportMode="0" iosDevice="0" osx_category="5" build_number="1" app_name="">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <file name="assets/Worker.lua"/>
+ <file name="assets/main.lua"/>
+</project>
