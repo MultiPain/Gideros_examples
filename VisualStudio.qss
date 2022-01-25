@@ -468,17 +468,14 @@ QTabWidget
 }
 */
 
-QTabBar {
-  margin-top: 4px;
-}
 QTabBar::tab {
-  margin: 1px 1px 0px 1px;
+  margin-left: 2px;
+  margin-bottom: 4px;
   color: #ffffff;
   /* background-color: #3d3d3d;  TODO */
   background-color: #434343;
   
   padding: 6px 12px;
-  margin-bottom: 4px;
 }
 
 QTabBar::tab:hover {
@@ -493,8 +490,11 @@ QTabBar::tab:selected {
   color: #ffffff;
   background-color: #434343;
   border-top: 2px solid #7160e8;
+  margin-bottom: 0px;
 }
 
+
+/*
 QTabBar::tab:bottom {
   border-top: 0;
   margin-top: 1px;
@@ -522,6 +522,7 @@ QTabBar::tab:top:last,
 QTabBar::tab:top:only-one {
   border-top-right-radius: 0px;
 }
+*/
 
 /*-----------------------------------*/
 
