@@ -3,7 +3,6 @@ require "ImGui_beta"
 require "TablesDemo"
 
 local ui = ImGui.new() 
-ui:setAutoUpdateCursor(true)
 local IO = ui:getIO()
 
 function onWindowResize()
@@ -19,6 +18,7 @@ local function onDrawGui(e)
 	
 	showDemoWindowTables(ui)
 	
+	ui:updateCursor()
 	ui:render()
 	ui:endFrame()
 end
