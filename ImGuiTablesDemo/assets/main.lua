@@ -14,7 +14,7 @@ function onWindowResize()
 end
 
 local function onDrawGui(e)
-	ui:newFrame(e)
+	ui:newFrame(e.deltaTime)
 	
 	showDemoWindowTables(ui)
 	
