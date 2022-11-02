@@ -1,23 +1,23 @@
 --!NOEXEC
-CT_Text @ 0
-CT_FillButton_2 @ 1
-CT_SmallButton @ 2
+CT_Text = 0
+CT_FillButton_2 = 1
+CT_SmallButton = 2
 
-CT_ShowWidth @ 0
-CT_ShortText @ 1
-CT_LongText @ 2
-CT_Button @ 3
-CT_FillButton @ 4
-CT_InputText @ 5
+CT_ShowWidth = 0
+CT_ShortText = 1
+CT_LongText = 2
+CT_Button = 3
+CT_FillButton = 4
+CT_InputText = 5
 
-CT_Selectable @ 4
-CT_SelectableSpanRow @ 5
+CT_Selectable = 4
+CT_SelectableSpanRow = 5
 
-MyItemColumnID_ID @ 0
-MyItemColumnID_Name @ 1
-MyItemColumnID_Action @ 2
-MyItemColumnID_Quantity @ 3
-MyItemColumnID_Description @ 4
+MyItemColumnID_ID = 0
+MyItemColumnID_Name = 1
+MyItemColumnID_Action = 2
+MyItemColumnID_Quantity = 3
+MyItemColumnID_Description = 4
 
 local ImGuiTableFlags_SizingMask_ = ImGui.TableFlags_SizingFixedFit | ImGui.TableFlags_SizingFixedSame | ImGui.TableFlags_SizingStretchProp | ImGui.TableFlags_SizingStretchSame
 local ImGuiTableColumnFlags_WidthMask_ = ImGui.TableColumnFlags_WidthStretch | ImGui.TableColumnFlags_WidthFixed
