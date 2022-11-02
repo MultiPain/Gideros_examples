@@ -1,5 +1,5 @@
 application:setBackgroundColor(0x323232)
-require "ImGui_beta"
+require "ImGui"
 require "TablesDemo"
 
 local ui = ImGui.new() 
