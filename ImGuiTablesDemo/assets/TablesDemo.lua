@@ -1175,9 +1175,9 @@ Without an explicit value, inner_width is == outer_size.x and therefore using St
 					--local row_bg_color = ui:getColorU32(row_bg_type == 1 ? ImVec4(0.7, 0.3, 0.3) : ImVec4(0.2f + row * 0.1, 0.2, 0.2)) -- Flat or Gradient?
 					local row_bg_color = 0
 					if (row_bg_type == 1) then 
-						row_bg_color = ui:colorConvertRGBtoHEX(0.7, 0.3, 0.3)
+						row_bg_color = ui.colorConvertRGBtoHEX(0.7, 0.3, 0.3)
 					else
-						row_bg_color = ui:colorConvertRGBtoHEX(0.2 + row * 0.1, 0.2, 0.2)
+						row_bg_color = ui.colorConvertRGBtoHEX(0.2 + row * 0.1, 0.2, 0.2)
 					end
 					ui:tableSetBgColor(ImGui.TableBgTarget_RowBg0 + row_bg_target, row_bg_color, 0.65)
 				end
@@ -1192,7 +1192,7 @@ Without an explicit value, inner_width is == outer_size.x and therefore using St
 					-- (the CellBg color will be blended over the RowBg and ColumnBg colors)
 					-- We can also pass a column number as a third parameter to TableSetBgColor() and do this outside the column loop.
 					if (row >= 1 and row <= 2 and column >= 1 and column <= 2 and cell_bg_type == 1) then
-						local cell_bg_color = ui:colorConvertRGBtoHEX(0.3, 0.3, 0.7)
+						local cell_bg_color = ui.colorConvertRGBtoHEX(0.3, 0.3, 0.7)
 						ui:tableSetBgColor(ImGui.TableBgTarget_CellBg, cell_bg_color, 0.65)
 					end
 				end
@@ -1436,7 +1436,7 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
 		ui:setNextItemOpen(open_action ~= 0)
 	end
 	
-	if (ui:treeNode("c")) then
+	if (ui:treeNode("Sorting")) then
 		-- Options
 		
 		pushStyleCompact(ui)
