@@ -64,8 +64,8 @@ local policies = {
 }
 
 local template_items_names = {
-    "Banana", "Apple", "Cherry", "Watermelon", "Grapefruit", "Strawberry", "Mango",
-    "Kiwi", "Orange", "Pineapple", "Blueberry", "Plum", "Coconut", "Pear", "Apricot"
+	"Banana", "Apple", "Cherry", "Watermelon", "Grapefruit", "Strawberry", "Mango",
+	"Kiwi", "Orange", "Pineapple", "Blueberry", "Plum", "Coconut", "Pear", "Apricot"
 }
 
 local s_current_sort_specs = 0
@@ -90,16 +90,16 @@ local function compareWithSortSpecs(a, b)
 		local dir = sort_spec:getSortDirection()
 		
 		if (dir == ImGui.SortDirection_Descending) then
-			if (id == MyItemColumnID_ID) then              return a.id > b.id
-			elseif (id == MyItemColumnID_Name) then        return a.name > b.name
-			elseif (id == MyItemColumnID_Quantity) then    return a.quantity > b.quantity
+			if (id == MyItemColumnID_ID) then			  return a.id > b.id
+			elseif (id == MyItemColumnID_Name) then		return a.name > b.name
+			elseif (id == MyItemColumnID_Quantity) then	return a.quantity > b.quantity
 			elseif (id == MyItemColumnID_Description) then return a.name > b.name
 			else assert(false) 
 			end
 		elseif (dir == ImGui.SortDirection_Ascending) then
-			if (id == MyItemColumnID_ID) then              return a.id < b.id
-			elseif (id == MyItemColumnID_Name) then        return a.name < b.name
-			elseif (id == MyItemColumnID_Quantity) then    return a.quantity < b.quantity
+			if (id == MyItemColumnID_ID) then			  return a.id < b.id
+			elseif (id == MyItemColumnID_Name) then		return a.name < b.name
+			elseif (id == MyItemColumnID_Quantity) then	return a.quantity < b.quantity
 			elseif (id == MyItemColumnID_Description) then return a.name < b.name
 			else assert(false) 
 			end
@@ -144,6 +144,8 @@ local nodes =
 	{ name = "Copy of Image001.png",		 tp = "Image file", size = 203256,	childIdx = -1, childCount = -1 },
 	{ name = "Copy of Image001 (Final2).png",tp = "Image file", size = 203512,	childIdx = -1, childCount = -1 },
 }
+
+local clipper = ImGuiListClipper.new()
 
 local function displayNode(ui, node)
 	ui:tableNextRow()
@@ -805,8 +807,7 @@ In this demo we don't show horizontal borders to emphasis how they don't affect 
 			ui:tableHeadersRow()
 
 			-- Demonstrate using clipper for large vertical lists
-
-			local clipper = ImGuiListClipper.new()
+			
 			clipper:beginClip(1000)
 			while (clipper:step()) do
 				for row = clipper:getDisplayStart(), clipper:getDisplayEnd() do
@@ -817,7 +818,6 @@ In this demo we don't show horizontal borders to emphasis how they don't affect 
 					end
 				end
 			end
-			clipper = nil
 			ui:endTable()
 		end
 		ui:treePop()
@@ -1432,81 +1432,79 @@ Note that on auto-resizing non-resizable fixed columns, querying the content wid
 		ui:treePop()
 	end
 	
-    if (open_action ~= -1) then
-        ui:setNextItemOpen(open_action ~= 0)
+	if (open_action ~= -1) then
+		ui:setNextItemOpen(open_action ~= 0)
 	end
 	
-    if (ui:treeNode("Sorting")) then
-        -- Options
-        
-        pushStyleCompact(ui)
-        flags[20] = ui:checkboxFlags("ImGui.TableFlags_SortMulti", flags[20], ImGui.TableFlags_SortMulti)
-        ui:sameLine() helpMarker(ui, "When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).")
-        flags[20] = ui:checkboxFlags("ImGui.TableFlags_SortTristate", flags[20], ImGui.TableFlags_SortTristate)
-        ui:sameLine() helpMarker(ui, "When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
-        popStyleCompact(ui)
+	if (ui:treeNode("c")) then
+		-- Options
+		
+		pushStyleCompact(ui)
+		flags[20] = ui:checkboxFlags("ImGui.TableFlags_SortMulti", flags[20], ImGui.TableFlags_SortMulti)
+		ui:sameLine() helpMarker(ui, "When sorting is enabled: hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).")
+		flags[20] = ui:checkboxFlags("ImGui.TableFlags_SortTristate", flags[20], ImGui.TableFlags_SortTristate)
+		ui:sameLine() helpMarker(ui, "When sorting is enabled: allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
+		popStyleCompact(ui)
 		
 		if (ui:beginTable("table_sorting", 4, flags[20], 0, TEXT_BASE_HEIGHT * 15)) then
-            -- Declare columns
-            -- We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
-            -- This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
-            -- Demonstrate using a mixture of flags among available sort-related flags:
-            -- - ImGuiTableColumnFlags_DefaultSort
-            -- - ImGuiTableColumnFlags_NoSort / ImGui.TableColumnFlags_NoSortAscending / ImGui.TableColumnFlags_NoSortDescending
-            -- - ImGui.TableColumnFlags_PreferSortAscending / ImGui.TableColumnFlags_PreferSortDescending
-            ui:tableSetupColumn("ID",       ImGui.TableColumnFlags_DefaultSort          | ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_ID)
-            ui:tableSetupColumn("Name",                                                   ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_Name)
-            ui:tableSetupColumn("Action",   ImGui.TableColumnFlags_NoSort               | ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_Action)
-            ui:tableSetupColumn("Quantity", ImGui.TableColumnFlags_PreferSortDescending | ImGui.TableColumnFlags_WidthStretch, 0, MyItemColumnID_Quantity)
-            ui:tableSetupScrollFreeze(0, 1) -- Make row always visible
-            ui:tableHeadersRow()
+			-- Declare columns
+			-- We use the "user_id" parameter of TableSetupColumn() to specify a user id that will be stored in the sort specifications.
+			-- This is so our sort function can identify a column given our own identifier. We could also identify them based on their index!
+			-- Demonstrate using a mixture of flags among available sort-related flags:
+			-- - ImGuiTableColumnFlags_DefaultSort
+			-- - ImGuiTableColumnFlags_NoSort / ImGui.TableColumnFlags_NoSortAscending / ImGui.TableColumnFlags_NoSortDescending
+			-- - ImGui.TableColumnFlags_PreferSortAscending / ImGui.TableColumnFlags_PreferSortDescending
+			ui:tableSetupColumn("ID",	   ImGui.TableColumnFlags_DefaultSort		  | ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_ID)
+			ui:tableSetupColumn("Name",												   ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_Name)
+			ui:tableSetupColumn("Action",   ImGui.TableColumnFlags_NoSort			   | ImGui.TableColumnFlags_WidthFixed,   0, MyItemColumnID_Action)
+			ui:tableSetupColumn("Quantity", ImGui.TableColumnFlags_PreferSortDescending | ImGui.TableColumnFlags_WidthStretch, 0, MyItemColumnID_Quantity)
+			ui:tableSetupScrollFreeze(0, 1) -- Make row always visible
+			ui:tableHeadersRow()
 
-            -- Sort our data if sort specs have been changed!
+			-- Sort our data if sort specs have been changed!
 			
 			local sorts_specs = ui:tableGetSortSpecs()
-            if (sorts_specs) then
-                if (sorts_specs:isSpecsDirty()) then
-                    s_current_sort_specs = sorts_specs -- Store in variable accessible by the sort function.
+			if (sorts_specs) then
+				if (sorts_specs:isSpecsDirty()) then
+					s_current_sort_specs = sorts_specs -- Store in variable accessible by the sort function.
 					
-                    if (#items > 1) then
+					if (#items > 1) then
 						table.sort(items, compareWithSortSpecs)
 					end
-                    sorts_specs:setSpecsDirty(false)
-                end
+					sorts_specs:setSpecsDirty(false)
+				end
 			end
 			
+			clipper:beginClip(#items)			
+			while (clipper:step()) do
+				for row_n = clipper:getDisplayStart(), clipper:getDisplayEnd() do
+					-- Display a data item
+					local item = items[row_n]
+					
+					ui:pushID(item.id)
+					
+					ui:tableNextRow()
+					
+					ui:tableNextColumn()
+					ui:text(("%04d"):format(item.id))
+					
+					ui:tableNextColumn()
+					ui:text(item.name)
+					
+					ui:tableNextColumn()
+					ui:smallButton("None")
+					
+					ui:tableNextColumn()
+					ui:text(item.quantity)
+					
+					ui:popID()
+				end
+			end
 			
-			local clipper = ImGuiListClipper.new()
-			clipper:beginClip(#items)            
-            while (clipper:step()) do
-                for row_n = clipper:getDisplayStart() + 1, clipper:getDisplayEnd() do
-                    -- Display a data item
-                    local item = items[row_n]
-					
-                    ui:pushID(item.id)
-					
-                    ui:tableNextRow()
-					
-                    ui:tableNextColumn()
-                    ui:text(("%04d"):format(item.id))
-					
-                    ui:tableNextColumn()
-                    ui:text(item.name)
-					
-                    ui:tableNextColumn()
-                    ui:smallButton("None")
-					
-                    ui:tableNextColumn()
-                    ui:text(item.quantity)
-					
-                    ui:popID()
-                end
-            end
-			
-            ui:endTable()
-        end
-        ui:treePop()
-    end
+			ui:endTable()
+		end
+		ui:treePop()
+	end
 
 	ui:popID()
 
