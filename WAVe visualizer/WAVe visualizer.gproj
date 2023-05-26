@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+ <properties windowWidth="0" vsync="0" retinaDisplay="0" autorotation="0" scaleMode="0" macos_category="5" html5_pack="0" html5_fbload="100" html5_pwa="0" app_icon="" disableSplash="0" windowHeight="0" orientation="0" osx_signingId="" splash_v_image="" mouseToTouch="1" architecture="0" html5_wasm="0" html5_host="" mainluaOnly="0" winrt_package="com.yourdomain.yourapp" version_code="1" atv_bundle="com.yourdomain.yourapp-atv" html5_fbinstant="0" html5_symbols="0" backgroundColor="#ffffff" iosDevice="0" version="1.0" splash_h_image="" fps="60" osx_domain="giderosmobile.com" exportMode="0" ios_bundle="com.yourdomain.yourapp-ios" win_org="GiderosMobile" winrt_org="GiderosMobile" mouseTouchOrder="0" encryptCode="0" splashScaleMode="0" tv_icon="" osx_bundle="com.yourdomain." win_domain="giderosmobile.com" encryptAssets="0" logicalWidth="320" html5_crash="" app_name="" touchToMouse="1" osx_org="GiderosMobile" html5_mem="256" logicalHeight="480" build_number="1" osx_category="5" osx_installerId="" macos_bundle="com.yourdomain.yourapp-macos">
+  <imageScales/>
+  <plugins/>
+  <exports/>
+ </properties>
+ <folder name="wav">
+  <file name="assets/wav/mini_sin_1200Hz_-6dBFS_3s.wav"/>
+  <file name="assets/wav/sin_1200Hz_-6dBFS_3s.wav"/>
+  <file name="assets/wav/woods.wav"/>
+ </folder>
+ <file name="assets/WAVreader.lua"/>
+ <file name="assets/main.lua"/>
+</project>
