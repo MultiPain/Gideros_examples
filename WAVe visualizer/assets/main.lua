@@ -5,8 +5,8 @@ ui = ImGui.new()
 IO = ui:getIO()
 stage:addChild(ui)
 
-RangeStart		= 0
-RangeEnd		= 1
+RangeStart		= 0.384
+RangeEnd		= 0.631
 FileLoading		= false
 FileReady		= false
 FileSelected	= 2
@@ -77,6 +77,7 @@ function updateGraph(desiredWidth, height, start, finish, data)
 	local channels = data.channelNum
 	local arr = data.samples
 	local realLen = #arr
+	local halfHeight = height * 0.5
 	
 	if desiredWidth > realLen then 
 		desiredWidth = realLen 
@@ -104,13 +105,13 @@ function updateGraph(desiredWidth, height, start, finish, data)
 	--]]
 	
 	-- fit samples into screen pixels
-	for i = 0, desiredWidth - 1 do
-		local v = 0
-		
-		for k = 1, channels do
+	for ch = 1, channels do
+		for i = 0, desiredWidth - 1 do
+			local v = 0
+			
 			-- calculate samples avg
 			for j = i * interval, (i + 1) * interval - 1 do
-				local idx = startIdx + j * channels + k
+				local idx = startIdx + j * channels + ch
 				
 				if idx > startIdx + len then
 					break
@@ -118,15 +119,15 @@ function updateGraph(desiredWidth, height, start, finish, data)
 				
 				v += arr[idx]
 			end
-			
-			v = v / interval
-			v = map(v, ampMin, ampMax, 0, 1)
-			
-			local h = v * height
+			v /= interval
 			local x = padding + i
-			local y = padding * k + height / 2 - h /2 + (k - 1) * height
-			rt:clear(0xffffff, 1, x, y, 1, h)
+			local clamped = map(v, ampMin, ampMax, -1, 1, true)
+			local h = (math.abs(clamped) * halfHeight) <> 1
+			local y = padding * ch + halfHeight - h * 0.5 + (ch - 1) * height
+			
+			rt:clear(0xffffff, 1, x, y, 1, h * 2)
 		end
+		rt:clear(0xa0a0a0, 1, 0, padding * ch + halfHeight + height * (ch - 1), rtWidth, 2)
 	end
 	
 	return rt
@@ -168,13 +169,7 @@ function updatePoints(desiredWidth, height, start, finish, data)
 				v += arr[idx]
 			end
 			
-			v = v / interval
-			v = map(v, ampMin, ampMax, 0, 1)
-			
-			local h = v * height
-			local x = i
-			local y = height / 2 - h /2
-			t[#t + 1] = y
+			t[#t + 1] = map(v / interval, ampMin, ampMax, 0, height)
 		end
 	end
 	
