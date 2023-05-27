@@ -15,6 +15,7 @@ GraphHeight		= 256
 ShowLoading		= false
 UsePointsGraph	= false
 UseHistogram	= false
+PointsAutoAdj	= true
 
 ImageTexture	= nil -- RenderTarget
 Points			= nil -- table of points per channel ({ {channel 1 points}, {channel 2 points} }
@@ -169,7 +170,7 @@ function updatePoints(desiredWidth, height, start, finish, data)
 				v += arr[idx]
 			end
 			
-			t[#t + 1] = map(v / interval, ampMin, ampMax, 0, height)
+			t[#t + 1] = v / interval
 		end
 	end
 	
@@ -189,14 +190,14 @@ function startReadingCurrentFile()
 		
 		local ok, errorMsg = pcall(function()
 			local path = SoundFiles[FileSelected + 1]
-			waveFile = WAVreader.new(path)
+			WaveFile = WAVreader.new(path)
 		end)
 		
 		FileLoading = false
 		
 		if ok then
 			FileReady = true
-			updateWave(GraphWidth, GraphHeight, RangeStart, RangeEnd, waveFile)
+			updateWave(GraphWidth, GraphHeight, RangeStart, RangeEnd, WaveFile)
 		else
 			FileError = errorMsg
 		end
@@ -223,6 +224,8 @@ function onEnterFrame(e)
 			if UsePointsGraph then
 				ui:sameLine()
 				UseHistogram = ui:checkbox("Use histogram", UseHistogram)
+				ui:sameLine()
+				PointsAutoAdj = ui:checkbox("Auto adjust points min & max", PointsAutoAdj)
 			end
 			
 			if openClicked or clicked or fileChanged then
@@ -251,7 +254,7 @@ function onEnterFrame(e)
 		ui:endDisabled()
 		
 		if changedX or changedY or changedRange then
-			Core.asyncCall(updateWave, GraphWidth, GraphHeight, RangeStart, RangeEnd, waveFile)
+			Core.asyncCall(updateWave, GraphWidth, GraphHeight, RangeStart, RangeEnd, WaveFile)
 		end
 		
 		if ShowLoading then
@@ -263,11 +266,22 @@ function onEnterFrame(e)
 		end
 		
 		if Points and not ShowLoading then
+			local scaleMin = 0
+			local scaleMax = 0
+			
+			if PointsAutoAdj then
+				scaleMin = nil
+				scaleMax = nil
+			else
+				scaleMin = WaveFile.ampMin
+				scaleMax = WaveFile.ampMax
+			end
+			
 			for i, points in ipairs(Points) do
 				if UseHistogram then
-					ui:plotHistogram(`CH {i}`, points, nil, nil, nil, nil, 0, GraphHeight)
+					ui:plotHistogram(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
 				else
-					ui:plotLines(`CH {i}`, points, nil, nil, nil, nil, 0, GraphHeight)
+					ui:plotLines(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
 				end
 			end
 		end
