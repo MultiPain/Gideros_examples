@@ -126,7 +126,7 @@ function updateGraph(desiredWidth, height, start, finish, data)
 			local h = (math.abs(clamped) * halfHeight) <> 1
 			local y = padding * ch + halfHeight - h * 0.5 + (ch - 1) * height
 			
-			rt:clear(0xffffff, 1, x, y, 1, h * 2)
+			rt:clear(0xffffff, 1, x, y, 1, h)
 		end
 		rt:clear(0xa0a0a0, 1, 0, padding * ch + halfHeight + height * (ch - 1), rtWidth, 2)
 	end
