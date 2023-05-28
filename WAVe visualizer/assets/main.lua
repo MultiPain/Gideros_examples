@@ -1,12 +1,15 @@
 require "lfs"
 require "ImGui"
+require "microphone"
 
-ui = ImGui.new()
-IO = ui:getIO()
+
+ui		= ImGui.new()
+Style	= ui:getStyle()
+IO		= ui:getIO()
 stage:addChild(ui)
 
-RangeStart		= 0.384
-RangeEnd		= 0.631
+RangeStart		= 0
+RangeEnd		= 1
 FileLoading		= false
 FileReady		= false
 FileSelected	= 2
@@ -16,6 +19,24 @@ ShowLoading		= false
 UsePointsGraph	= false
 UseHistogram	= false
 PointsAutoAdj	= true
+
+MicSettings		= {
+	fname = "tesetRecording",
+	sampleRate = 44100,
+	numChannels = 2,
+	bitsPerSample = 2, -- 1=8, 2=16
+	quality = 1,
+	recordTime = 10,
+}
+
+MicTimeStart	= 0
+MicPeakAmp		= 0
+MicCurrentAmp	= 0
+MicPauseTime	= 0
+MicPaused		= false -- track by myself because "Mic" object does not exist until you hit "Record" button
+MicRecording	= false
+MicFileOutput	= false
+MicPoints		= {}
 
 ImageTexture	= nil -- RenderTarget
 Points			= nil -- table of points per channel ({ {channel 1 points}, {channel 2 points} }
@@ -35,15 +56,19 @@ local function getWavProjectFiles(path)
 			local s = getWavProjectFiles(fpath)
 			table.move(s, 1, #s, #t + 1, t)
 		elseif file:sub(-3):lower() == "wav" then
-			t[#t + 1] = fpath:sub(5)
+			t[#t + 1] = fpath--:sub(5)
 		end
 	end
 	
 	return t
 end
 
-SoundFiles = getWavProjectFiles("|R|")
-assert(#SoundFiles > 0, "No WAV files found...")
+function scanFiles()
+	SoundFiles = getWavProjectFiles("|R|")
+	local t = getWavProjectFiles("|D|")
+	table.move(t, 1, #t, #SoundFiles + 1, SoundFiles)
+	assert(#SoundFiles > 0, "No WAV files found...")
+end
 
 function map(n, start1, stop1, start2, stop2, withinBounds)
 	local v = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2
@@ -204,91 +229,222 @@ function startReadingCurrentFile()
 	end)
 end
 
+function micListener(e)
+	MicCurrentAmp = e.averageAmplitude
+	MicPeakAmp = e.peakAmplitude
+	MicPoints[#MicPoints + 1] = e.averageAmplitude
+end
+
 function onEnterFrame(e)
 	local dt = e.deltaTime
 	ui:newFrame(dt)
 	
 	if ui:beginFullScreenWindow("WAV visualizer") then
 		local availW, availH = ui:getContentRegionAvail()
-		ui:pushItemWidth(availW - 120)
-		local fileChanged = false
+		-- tabs
 		
-		FileSelected, fileChanged = ui:combo("File", FileSelected, SoundFiles)
+		ui:beginTabBar("Body")
 		
-		ui:beginDisabled(FileLoading)
-			local openClicked = ui:button("Open", availW)
+		if ui:beginTabItem("Files") then
+			ui:pushItemWidth(availW - 120)
+			local fileChanged = false
 			
-			local clicked = false
-			UsePointsGraph, clicked = ui:checkbox("Use points graph", UsePointsGraph)
 			
-			if UsePointsGraph then
-				ui:sameLine()
-				UseHistogram = ui:checkbox("Use histogram", UseHistogram)
-				ui:sameLine()
-				PointsAutoAdj = ui:checkbox("Auto adjust points min & max", PointsAutoAdj)
-			end
+			ui:beginDisabled(FileLoading)
+				
+				if ui:button("Refresh files", availW) then
+					scanFiles()
+				end
+				
+				FileSelected, fileChanged = ui:combo("File", FileSelected, SoundFiles)
+				
+				local openClicked = ui:button("Open", availW)
+				
+				local clicked = false
+				UsePointsGraph, clicked = ui:checkbox("Use points graph", UsePointsGraph)
+				
+				if UsePointsGraph then
+					ui:sameLine()
+					UseHistogram = ui:checkbox("Use histogram", UseHistogram)
+					ui:sameLine()
+					PointsAutoAdj = ui:checkbox("Auto adjust points min & max", PointsAutoAdj)
+				end
+				
+				if openClicked or clicked or fileChanged then
+					startReadingCurrentFile()
+				end
+			ui:endDisabled()
 			
-			if openClicked or clicked or fileChanged then
-				startReadingCurrentFile()
-			end
-		ui:endDisabled()
-		
-		if FileReady then
-			ui:textColored("File is ready", 0x00ff00, 1)
-		elseif FileLoading then
-			ui:textColored("Reading file...", 0xe6a400, 1)
-		else
-			ui:textColored("File is NOT ready", 0xff0000, 1)
-		end
-		
-		if FileError then
-			ui:textColored(FileError, 0xff0000, 1)
-		end
-		
-		local changedX, changedY, changedRange = false
-		
-		ui:beginDisabled(not FileReady)
-			GraphWidth,  changedX = ui:sliderInt("Image width",  GraphWidth,  128, 4096)
-			GraphHeight, changedY = ui:sliderInt("Image height", GraphHeight, 128, 4096)
-			RangeStart, RangeEnd, changedRange = ui:dragFloatRange2("View range", RangeStart, RangeEnd, 0.0001, 0, 1, nil, nil, ImGui.SliderFlags_AlwaysClamp)		
-		ui:endDisabled()
-		
-		if changedX or changedY or changedRange then
-			Core.asyncCall(updateWave, GraphWidth, GraphHeight, RangeStart, RangeEnd, WaveFile)
-		end
-		
-		if ShowLoading then
-			ui:text("Loading...")
-		end
-		
-		if ImageTexture and not ShowLoading then
-			ui:scaledImage("WAVE", ImageTexture, availW, GraphHeight, ImGui.ImageScaleMode_Stretch)
-		end
-		
-		if Points and not ShowLoading then
-			local scaleMin = 0
-			local scaleMax = 0
-			
-			if PointsAutoAdj then
-				scaleMin = nil
-				scaleMax = nil
+			if FileReady then
+				ui:textColored("File is ready", 0x00ff00, 1)
+			elseif FileLoading then
+				ui:textColored("Reading file...", 0xe6a400, 1)
 			else
-				scaleMin = WaveFile.ampMin
-				scaleMax = WaveFile.ampMax
+				ui:textColored("File is NOT ready", 0xff0000, 1)
 			end
 			
-			for i, points in ipairs(Points) do
-				if UseHistogram then
-					ui:plotHistogram(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
+			if FileError then
+				ui:textColored(FileError, 0xff0000, 1)
+			end
+			
+			local changedX, changedY, changedRange = false
+			
+			ui:beginDisabled(not FileReady)
+				GraphWidth,  changedX = ui:sliderInt("Image width",  GraphWidth,  128, 4096)
+				GraphHeight, changedY = ui:sliderInt("Image height", GraphHeight, 128, 4096)
+				RangeStart, RangeEnd, changedRange = ui:dragFloatRange2("View range", RangeStart, RangeEnd, 0.0001, 0, 1, nil, nil, ImGui.SliderFlags_AlwaysClamp)		
+			ui:endDisabled()
+			
+			if WaveFile then
+				ui:text("Amp min:") ui:sameLine()
+				ui:text(WaveFile.ampMin)
+				ui:text("Amp max:") ui:sameLine()
+				ui:text(WaveFile.ampMax)
+			end
+			
+			if changedX or changedY or changedRange then
+				Core.asyncCall(updateWave, GraphWidth, GraphHeight, RangeStart, RangeEnd, WaveFile)
+			end
+			
+			if ShowLoading then
+				ui:text("Loading...")
+			end
+			
+			if ImageTexture and not ShowLoading then
+				ui:scaledImage("WAVE", ImageTexture, availW, GraphHeight, ImGui.ImageScaleMode_Stretch)
+			end
+			
+			if Points and not ShowLoading then
+				local scaleMin = 0
+				local scaleMax = 0
+				
+				if PointsAutoAdj then
+					scaleMin = nil
+					scaleMax = nil
 				else
-					ui:plotLines(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
+					scaleMin = WaveFile.ampMin
+					scaleMax = WaveFile.ampMax
+				end
+				
+				for i, points in ipairs(Points) do
+					if UseHistogram then
+						ui:plotHistogram(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
+					else
+						ui:plotLines(`CH {i}`, points, nil, nil, scaleMin, scaleMax, 0, GraphHeight)
+					end
 				end
 			end
+			
+			ui:popItemWidth()
+			
+			ui:endTabItem()
 		end
 		
-		ui:popItemWidth()
+		if ui:beginTabItem("Microphone") then
+			ui:beginDisabled(MicRecording)
+				MicSettings.sampleRate		= ui:sliderInt("Sample rate", MicSettings.sampleRate, 4000, 44100)
+				MicSettings.numChannels		= ui:sliderInt("Channels", MicSettings.numChannels, 1, 2)
+				MicSettings.bitsPerSample	= ui:sliderInt("Bits per sample", MicSettings.bitsPerSample, 1, 2, MicSettings.bitsPerSample * 8)
+				MicSettings.quality			= ui:sliderFloat("Quality", MicSettings.quality, 0.1, 1)
+				MicSettings.recordTime		= ui:sliderFloat("Record time (in s.)", MicSettings.recordTime, 1, 60)
+			ui:endDisabled()
+			
+			ui:beginDisabled(MicRecording)
+			MicFileOutput = ui:checkbox("Output to file", MicFileOutput)
+			ui:endDisabled()
+			
+			ui:beginDisabled(not MicFileOutput)
+				MicSettings.fname = ui:inputText("File name", MicSettings.fname, 1024)
+			ui:endDisabled()
+			
+			ui:pushStyleVar(ImGui.StyleVar_FramePadding, 10, 10)
+			
+			local spX = Style:getItemSpacing()
+			local btnW = (availW - spX * 2) / 3
+			
+			ui:beginDisabled(MicRecording)
+				if ui:button("Record", btnW) then
+					if Mic then
+						Mic:removeEventListener(Event.DATA_AVAILABLE, micListener)
+						Mic = nil
+					end
+					
+					Mic = Microphone.new(nil, MicSettings.sampleRate, MicSettings.numChannels, MicSettings.bitsPerSample * 8, MicSettings.quality)
+					Mic:addEventListener(Event.DATA_AVAILABLE, micListener)
+					MicPoints = {}
+					MicRecording = true
+					MicTimeStart = ui:getTime()
+					
+					if MicFileOutput then
+						Mic:setOutputFile(`|D|{MicSettings.fname}.wav`)
+					end
+					
+					Mic:start()
+				end
+			ui:endDisabled()
+			
+			ui:sameLine()
+			ui:beginDisabled(not MicRecording)
+				if ui:button("STOP", btnW) then
+					MicRecording = false
+					MicPaused = false
+					Mic:stop()
+				end
+				
+				ui:sameLine()
+				
+				if MicPaused then
+					if ui:button("Resume", btnW) then
+						MicPaused = false
+						Mic:setPaused(false)
+					end
+				else
+					if ui:button("Pause", btnW) then
+						MicPauseTime = ui:getTime()
+						MicPaused = true
+						Mic:setPaused(true)
+					end
+				end
+			ui:endDisabled()
+			
+			if MicRecording then
+				local frac = 0
+				
+				if MicPaused then
+					frac = (MicPauseTime - MicTimeStart) / MicSettings.recordTime
+				else
+					local time = ui:getTime() - MicTimeStart
+					frac = time / MicSettings.recordTime
+				end
+				
+				ui:progressBar(frac, nil, nil, "Record time: %.2f")
+				
+				ui:progressBar(MicCurrentAmp)
+				local minX, minY, maxX, maxY = ui:getItemRect()
+				local list = ui:getWindowDrawList()
+				local x = minX + MicPeakAmp * (maxX - minX)
+				list:addLine(x, minY, x, maxY - 1, 0xff0000, 1)
+				
+				if frac >= 1 then
+					MicRecording = false
+					MicPaused = false
+					Mic:stop()
+				end
+			end
+			
+			if #MicPoints > 0 then
+				ui:plotLines("MicInput", MicPoints, nil, nil, 0, 1, 0, 256)
+			end
+			
+			ui:popStyleVar()
+			ui:endTabItem()
+		end
+		
+		ui:endTabBar()
 	end
 	ui:endWindow()
+	
+	--ui:showDemoWindow()
 	
 	ui:render()
 	ui:endFrame()
@@ -302,6 +458,7 @@ function onAppResize(self, e)
 	ui:setPosition(minX, minY)
 end
 
+scanFiles()
 startReadingCurrentFile()
 onAppResize()
 stage:addEventListener("applicationResize", onAppResize)
