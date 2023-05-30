@@ -42,21 +42,30 @@ ImageTexture	= nil -- RenderTarget
 Points			= nil -- table of points per channel ({ {channel 1 points}, {channel 2 points} }
 FileError		= nil -- io.open() error message
 
-local function getWavProjectFiles(path)
+local function getFiles(ext, ...)
+	ext = ext:lower()
 	local t = {}
+	local stack = {...}
 	
-	for file in lfs.dir(path) do
-		if file == "." or file == ".." then
-			continue
-		end
-		local fpath = `{path}/{file}`
-		local attr = lfs.attributes(fpath)
+	while #stack > 0 do
+		local path = table.remove(stack)
 		
-		if attr.mode == "directory" then
-			local s = getWavProjectFiles(fpath)
-			table.move(s, 1, #s, #t + 1, t)
-		elseif file:sub(-3):lower() == "wav" then
-			t[#t + 1] = fpath--:sub(5)
+		for file in lfs.dir(path) do
+			if file == '.' or file == '..' then
+				continue
+			end
+			
+			local fpath = `{path}/{file}`
+			local attrib = lfs.attributes(fpath)
+			
+			if attrib.mode == 'directory' then
+				stack[#stack + 1] = fpath
+			elseif attrib.mode == 'file' then
+				local dotExt = file:match("%.[^.]*$")
+				if dotExt:sub(2):lower() == ext then
+					t[#t + 1] = fpath
+				end
+			end
 		end
 	end
 	
@@ -64,9 +73,7 @@ local function getWavProjectFiles(path)
 end
 
 function scanFiles()
-	SoundFiles = getWavProjectFiles("|R|")
-	local t = getWavProjectFiles("|D|")
-	table.move(t, 1, #t, #SoundFiles + 1, SoundFiles)
+	SoundFiles = getFiles("wav", "|R|", "|D|")
 	assert(#SoundFiles > 0, "No WAV files found...")
 end
 
